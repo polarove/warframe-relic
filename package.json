@@ -12,7 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "@nuxtjs/color-mode": "^3.3.2",
-    "@polaris_liu/toolcat": "1.0.1",
+    "@polaris_liu/toolcat": "1.0.12",
     "@unocss/nuxt": "^0.58.5",
     "nuxt": "^3.10.3",
     "nuxt-icons": "^3.2.1",
