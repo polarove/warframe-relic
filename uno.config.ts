@@ -30,6 +30,18 @@ export default defineConfig({
   ],
   rules: [
     [
+      'font-small',
+      {
+        'font-size': '0.88rem'
+      }
+    ],
+    [
+      'font-large',
+      {
+        'font-size': '1.11rem'
+      }
+    ],
+    [
       'p-r',
       {
         position: 'relative'

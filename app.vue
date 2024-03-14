@@ -1,11 +1,7 @@
 <template>
-  <div>
-    {{ StrUtil.isNotEmpty('') }}
-  </div>
+  <nuxt-page />
 </template>
 
-<script setup lang="ts">
-import { StrUtil } from '@polaris_liu/toolcat'
-</script>
+<script setup lang="ts"></script>
 
 <style lang="scss" scoped></style>
