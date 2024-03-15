@@ -18,6 +18,7 @@
     "@pinia/nuxt": "^0.5.1",
     "@polaris_liu/toolcat": "1.0.12",
     "@unocss/nuxt": "^0.58.5",
+    "@vueuse/motion": "^2.1.0",
     "element-plus": "^2.6.1",
     "nuxt": "^3.10.3",
     "nuxt-icons": "^3.2.1",
@@ -25,9 +26,11 @@
     "vue-router": "^4.3.0"
   },
   "devDependencies": {
+    "@vueuse/core": "^10.9.0",
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",
     "@esbuild-kit/cjs-loader": "latest",
+    "@vueuse/nuxt": "^10.9.0",
     "commitizen": "latest",
     "cz-conventional-changelog": "latest",
     "fast-glob": "latest",

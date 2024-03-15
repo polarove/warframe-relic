@@ -9,7 +9,10 @@ import { API } from '~/constants'
 import { ElMessage } from 'element-plus'
 import type { Fissure } from '~/types/fissure'
 import { LANGUAGE, PLATFORM } from '~/enums'
-
+useHead({
+  title: '裂缝 | warframe-team',
+  link: [{ rel: 'shortcut icon', href: './fissure-logo-white.svg' }]
+})
 const fissures = ref<Fissure[]>([])
 const initData = (
   platform: PLATFORM = PLATFORM.PC,

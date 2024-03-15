@@ -13,7 +13,9 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/color-mode',
     '@unocss/nuxt',
+    '@vueuse/nuxt',
     '@pinia/nuxt',
+    '@vueuse/motion/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
     ['@element-plus/nuxt', { importStyle: 'scss', themes: ['dark'] }]
   ],
