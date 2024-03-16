@@ -5,6 +5,12 @@ export enum PLATFORM {
   SWI = 'swi'
 }
 
+export enum THEMES {
+  DARK = 'dark',
+  LIGHT = 'light',
+  SYSTEM = 'system'
+}
+
 export enum LANGUAGE {
   DEFAULT = 'en',
   DE = 'de',

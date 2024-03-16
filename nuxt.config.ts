@@ -9,7 +9,7 @@ export default defineNuxtConfig({
     '@css': resolve(__dirname, './assets/css'),
     '@scss': resolve(__dirname, './assets/scss')
   },
-  css: ['@css/normalize.css', '@css/scrollbar.css'],
+  css: ['@css/normalize.css', '@css/scrollbar.css', '@css/universal.css'],
   modules: [
     '@nuxtjs/color-mode',
     '@unocss/nuxt',
@@ -20,7 +20,12 @@ export default defineNuxtConfig({
     ['@element-plus/nuxt', { importStyle: 'scss', themes: ['dark'] }]
   ],
   colorMode: {
-    classSuffix: ''
+    preference: 'system', // default value of $colorMode.preference
+    fallback: 'dark', // fallback value if not system preference found
+    globalName: '__NUXT_COLOR_MODE__',
+    classPrefix: '',
+    classSuffix: '',
+    storageKey: 'nuxt-color-mode'
   },
   vite: {
     css: {

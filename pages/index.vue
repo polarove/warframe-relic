@@ -1,27 +1,13 @@
 <template>
   <section class="px-70px">
-    <div class="pt-60px pb-30px">
-      <div>不仅仅是组队</div>
-      <div class="text-size-[3rem]">Warframe Team</div>
+    <div class="title">
+      <animated-underline pb="3px">
+        <el-text>不仅仅是组队</el-text>
+      </animated-underline>
+      <h1 class="title-primary">Warframe Team</h1>
     </div>
     <div><el-button type="primary">开始</el-button></div>
-    <el-row class="pt-67px" :gutter="14">
-      <el-col :xs="12" :sm="12" :md="8" :lg="4" class="pb-14px">
-        <wt-features route="fissure" />
-      </el-col>
-      <el-col :xs="12" :sm="12" :md="8" :lg="4" class="pb-14px">
-        <wt-features route="fissure" />
-      </el-col>
-      <el-col :xs="12" :sm="12" :md="8" :lg="4" class="pb-14px">
-        <wt-features route="fissure" />
-      </el-col>
-      <el-col :xs="12" :sm="12" :md="8" :lg="4" class="pb-14px">
-        <wt-features route="fissure" />
-      </el-col>
-      <el-col :xs="12" :sm="12" :md="8" :lg="4" class="pb-14px">
-        <wt-features route="fissure" />
-      </el-col>
-    </el-row>
+    <wt-features class="pt-67px" />
   </section>
 </template>
 
@@ -32,4 +18,13 @@ useHead({
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.title {
+  padding: 60px 0 35px 0;
+
+  .title-primary {
+    font-size: 3rem;
+    margin: 0;
+  }
+}
+</style>

@@ -1,9 +1,9 @@
 <template>
   <nuxt-link :to="route" class="wt-feature-card">
-    <article class="item">
+    <el-card shadow="hover">
       <h2 class="title">{{ title }}</h2>
       <p class="details">{{ details }}</p>
-    </article>
+    </el-card>
   </nuxt-link>
 </template>
 
@@ -25,5 +25,11 @@ withDefaults(
 .wt-feature-card {
   text-decoration: none;
   color: var(--el-text-color-regular);
+  &::v-deep(.el-card) {
+    border-radius: 8px;
+    &:hover {
+      border: 1px solid var(--el-color-primary);
+    }
+  }
 }
 </style>

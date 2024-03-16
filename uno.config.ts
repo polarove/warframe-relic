@@ -10,7 +10,8 @@ export default defineConfig({
       md: '992px',
       lg: '1200px',
       xl: '1920px'
-    }
+    },
+    colors: {}
   },
   // 以下配置是为了可以在组件中更方便地使用图标<el-button icon="i-ep-lock"/>
   // 需要安装来自iconify-json/icon-set-name的图标才行, 如 iconify-json/ep
@@ -29,6 +30,18 @@ export default defineConfig({
     }
   ],
   rules: [
+    [
+      'color-primary',
+      {
+        color: 'var(--el-color-primary)'
+      }
+    ],
+    [
+      'color-text-regular',
+      {
+        color: 'var(--el-text-color-primary)'
+      }
+    ],
     [
       'font-small',
       {
