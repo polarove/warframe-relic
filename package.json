@@ -1,10 +1,9 @@
 {
   "name": "warframe-team-nuxt",
   "private": true,
-  "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev --port 3000",
+    "d": "nuxt dev --port 3000",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
@@ -26,15 +25,20 @@
     "vue-router": "^4.3.0"
   },
   "devDependencies": {
-    "@vueuse/core": "^10.9.0",
+    "@cz-translated-changelog/zh-cn": "^0.0.14",
     "@commitlint/cli": "latest",
     "@commitlint/config-conventional": "latest",
     "@esbuild-kit/cjs-loader": "latest",
+    "@vueuse/core": "^10.9.0",
     "@vueuse/nuxt": "^10.9.0",
     "commitizen": "latest",
-    "cz-conventional-changelog": "latest",
     "fast-glob": "latest",
     "husky": "latest",
     "sass": "^1.71.1"
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-translated-changelog/zh-cn"
+    }
   }
 }
