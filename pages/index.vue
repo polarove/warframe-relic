@@ -1,5 +1,5 @@
 <template>
-  <section class="px-70px">
+  <section transition="all">
     <div class="title">
       <animated-underline pb="3px">
         <el-text>不仅仅是组队</el-text>
@@ -14,7 +14,7 @@
 <script setup lang="ts">
 useHead({
   title: '主页 | warframe-team',
-  link: [{ rel: 'shortcut icon', href: './warframe-logo-white.svg' }]
+  link: [{ rel: 'shortcut icon', href: './warframe-team-logo-white.svg' }]
 })
 </script>
 
