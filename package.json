@@ -15,7 +15,7 @@
     "@nuxtjs/color-mode": "^3.3.2",
     "@pinia-plugin-persistedstate/nuxt": "^1.2.0",
     "@pinia/nuxt": "^0.5.1",
-    "@polaris_liu/toolcat": "1.0.12",
+    "@polaris_liu/toolcat": "1.0.21",
     "@unocss/nuxt": "^0.58.5",
     "@vueuse/motion": "^2.1.0",
     "element-plus": "^2.6.1",
