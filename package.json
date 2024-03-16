@@ -38,7 +38,7 @@
   },
   "config": {
     "commitizen": {
-      "path": "node_modules/cz-translated-changelog/zh-cn"
+      "path": "node_modules/@cz-translated-changelog/zh-cn"
     }
   }
 }
