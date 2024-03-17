@@ -7,16 +7,18 @@
         :xs="24"
         :sm="12"
         :md="8"
-        :lg="6"
-        :xl="4"
+        :xl="6"
         pb="20px"
       >
         <rotate-card>
           <el-card class="m-10px">
             <template #header>
-              {{ fissure.node }} - {{ fissure.missionType }}
+              <div class="flex-between">
+                <span>{{ fissure.node }} - {{ fissure.missionType }}</span>
+                <span>{{ fissure.tier }}</span>
+              </div>
             </template>
-            <div>{{ fissure.tier }}</div>
+
             <div>{{ fissure.expiry }}</div>
             <div>active: {{ fissure.active }}</div>
             <div>subscribed: {{ fissure.subscribed }}</div>
