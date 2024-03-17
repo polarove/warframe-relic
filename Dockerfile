@@ -1,6 +1,7 @@
 FROM node:21.4.0 AS build
 WORKDIR /app
-RUN yarn install && yarn run b
+RUN corepack enble pnpm
+RUN pnpm install && pnpm build
 
 FROM node:21.4.0 AS final
 ENV NODE_ENV=production
