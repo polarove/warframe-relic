@@ -66,7 +66,6 @@ const fillOrigin = (fissure: Fissure[]) => {
 }
 
 const handleError = (err: unknown) => {
-  console.log(err)
   ElMessage.error('[数据错误]：处理裂缝数据时发生意外错误')
 }
 

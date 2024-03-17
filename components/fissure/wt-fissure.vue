@@ -1,7 +1,7 @@
 <template>
   <section>
     <h1>{{ title }}</h1>
-    <el-row :gutter="24" v-loading="fissures.length <= 0">
+    <el-row :gutter="24">
       <el-col
         v-for="fissure in fissures"
         :xs="24"
