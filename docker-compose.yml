@@ -3,7 +3,7 @@ services:
   warframe-team-nuxt:
     image: warframe-team-nuxt
     ports:
-      - 443:443
+      - 3000:443
     build:
       context: ./
       dockerfile: Dockerfile
