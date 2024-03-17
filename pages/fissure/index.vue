@@ -1,10 +1,25 @@
 <template>
   <div transition="all">
-    <wt-fissure title="始源星系" :fissures="origin" class="min-h-50vh" />
+    <wt-fissure
+      title="始源星系"
+      :fissures="origin"
+      class="min-h-50vh"
+      v-loading="origin.length > 0"
+    />
     <el-divider />
-    <wt-fissure title="钢铁之路" :fissures="steelPath" class="min-h-50vh" />
+    <wt-fissure
+      title="钢铁之路"
+      :fissures="steelPath"
+      class="min-h-50vh"
+      v-loading="origin.length > 0"
+    />
     <el-divider />
-    <wt-fissure title="九重天" :fissures="empyrean" class="min-h-50vh" />
+    <wt-fissure
+      title="九重天"
+      :fissures="empyrean"
+      class="min-h-50vh"
+      v-loading="origin.length > 0"
+    />
   </div>
 </template>
 
