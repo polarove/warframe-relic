@@ -10,7 +10,7 @@
         :xl="6"
         pb="20px"
       >
-        <rotate-card>
+        <rotate-card :intensity="5">
           <el-card class="m-10px">
             <template #header>
               <div class="flex-between">
@@ -18,10 +18,14 @@
                 <span>{{ fissure.tier }}</span>
               </div>
             </template>
-
-            <div>{{ fissure.expiry }}</div>
-            <div>active: {{ fissure.active }}</div>
-            <div>subscribed: {{ fissure.subscribed }}</div>
+            <div class="font-small">
+              {{ fissure.subscribed ? '已订阅' : '未订阅' }}
+            </div>
+            <el-countdown
+              title="剩余时间"
+              :value="getTimestamp(fissure.expiry)"
+              @finish="handleFinish(fissure)"
+            />
           </el-card>
         </rotate-card>
       </el-col>
@@ -35,6 +39,15 @@ defineProps<{
   title: string
   fissures: Fissure[]
 }>()
+
+const getTimestamp = (dateStr: string) => new Date(dateStr).getTime()
+const emits = defineEmits(['finish'])
+const handleFinish = (fissure: Fissure) => {
+  console.log(
+    fissure.node.concat(' - ').concat(fissure.missionType).concat('已经过期')
+  )
+  emits('finish', fissure)
+}
 </script>
 
 <style lang="scss" scoped></style>

@@ -16,11 +16,11 @@ import { useElementTransform } from '@vueuse/motion'
 
 const props = withDefaults(
   defineProps<{
-    scale?: number
+    intensity?: number
     type?: 'square' | 'circle'
   }>(),
   {
-    scale: 15,
+    intensity: 15,
     type: 'square'
   }
 )
@@ -32,8 +32,8 @@ const { transform } = useElementTransform(target)
 const rotate = (event: any) => {
   let X = event.offsetX / width.value
   let Y = event.offsetY / height.value
-  let rX = (X - 0.5) * props.scale
-  let rY = -(Y - 0.5) * props.scale
+  let rX = (X - 0.5) * props.intensity
+  let rY = -(Y - 0.5) * props.intensity
 
   transform.rotateX = rY
   transform.rotateY = rX
