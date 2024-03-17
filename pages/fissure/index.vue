@@ -1,25 +1,10 @@
 <template>
   <div transition="all">
-    <wt-fissure
-      title="始源星系"
-      :fissures="origin"
-      class="min-h-50vh"
-      v-loading="originLoading"
-    />
+    <wt-fissure title="始源星系" :fissures="origin" class="min-h-50vh" />
     <el-divider />
-    <wt-fissure
-      title="钢铁之路"
-      :fissures="steelPath"
-      class="min-h-50vh"
-      v-loading="steelPathLoading"
-    />
+    <wt-fissure title="钢铁之路" :fissures="steelPath" class="min-h-50vh" />
     <el-divider />
-    <wt-fissure
-      title="九重天"
-      :fissures="empyrean"
-      class="min-h-50vh"
-      v-loading="empyreanLoading"
-    />
+    <wt-fissure title="九重天" :fissures="empyrean" class="min-h-50vh" />
   </div>
 </template>
 
@@ -66,7 +51,6 @@ const fillSteelPath = (fissure: Fissure[]) => {
   fissure
     .filter((fissure) => fissure.isHard)
     .forEach((hard) => steelPath.push(hard))
-  steelPathLoading.value = false
   return fissure
 }
 
@@ -74,7 +58,6 @@ const fillEmpyrean = (fissure: Fissure[]) => {
   fissure
     .filter((fissure) => fissure.isStorm)
     .forEach((hard) => empyrean.push(hard))
-  empyreanLoading.value = false
   return fissure
 }
 
@@ -83,7 +66,6 @@ const fillOrigin = (fissure: Fissure[]) => {
     .filter((fissure) => !fissure.isStorm)
     .filter((fissure) => !fissure.isHard)
     .forEach((normal) => origin.push(normal))
-  originLoading.value = false
 }
 
 const handleError = (_: unknown) => {
