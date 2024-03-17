@@ -1,15 +1,11 @@
 <template>
   <div
     class="rotate-card"
-    :class="{ square: type === 'square', circle: type === 'circle' }"
+    :class="type"
     @mouseleave="reset"
     @mousemove="rotate($event)"
   >
-    <div
-      class="rotate-card-item"
-      :class="{ square: type === 'square', circle: type === 'circle' }"
-      ref="target"
-    >
+    <div class="rotate-card-item" :class="type" ref="target">
       <slot> </slot>
     </div>
   </div>
@@ -17,16 +13,17 @@
 
 <script setup lang="ts">
 import { useElementTransform } from '@vueuse/motion'
-const props = defineProps({
-  scale: {
-    type: Number,
-    default: 15
-  },
-  type: {
-    type: String,
-    default: 'square'
+
+const props = withDefaults(
+  defineProps<{
+    scale?: number
+    type?: 'square' | 'circle'
+  }>(),
+  {
+    scale: 15,
+    type: 'square'
   }
-})
+)
 
 const target = ref<HTMLElement | null>(null)
 const { width, height } = useElementBounding(target)
@@ -62,9 +59,10 @@ const reset = () => {
   user-select: none;
   white-space: nowrap;
   display: inline-block;
+  width: 100%;
   overflow: hidden;
   .rotate-card-item {
-    display: inline-block;
+    width: 100%;
     transition: transform 0.25s ease-out;
   }
 }

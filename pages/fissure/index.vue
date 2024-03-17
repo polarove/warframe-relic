@@ -20,11 +20,8 @@ useHead({
 })
 
 const origin = reactive<Fissure[]>([])
-const originLoading = ref<boolean>(true)
 const steelPath = reactive<Fissure[]>([])
-const steelPathLoading = ref<boolean>(true)
 const empyrean = reactive<Fissure[]>([])
-const empyreanLoading = ref<boolean>(true)
 
 const fetchData = (url: string, data: any) => {
   useFetch(url, data)

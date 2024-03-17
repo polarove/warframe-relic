@@ -10,15 +10,17 @@
         :xl="6"
         pb="40px"
       >
-        <el-card>
-          <template #header>
-            {{ fissure.node }} - {{ fissure.missionType }}
-          </template>
-          <div>{{ fissure.tier }}</div>
-          <div>{{ fissure.expiry }}</div>
-          <div>active: {{ fissure.active }}</div>
-          <div>subscribed: {{ fissure.subscribed }}</div>
-        </el-card>
+        <rotate-card>
+          <el-card class="m-10px">
+            <template #header>
+              {{ fissure.node }} - {{ fissure.missionType }}
+            </template>
+            <div>{{ fissure.tier }}</div>
+            <div>{{ fissure.expiry }}</div>
+            <div>active: {{ fissure.active }}</div>
+            <div>subscribed: {{ fissure.subscribed }}</div>
+          </el-card>
+        </rotate-card>
       </el-col>
     </el-row>
   </section>

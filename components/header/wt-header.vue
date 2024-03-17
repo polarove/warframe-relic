@@ -1,5 +1,5 @@
 <template>
-  <section class="wt-header" :class="{ shadow: fixed }">
+  <section class="wt-header" :class="{ shadow: scrolled }">
     <el-row justify="space-between" items="center" h="100%">
       <el-col :span="4">
         <nuxt-link to="/" class="home">
@@ -14,10 +14,7 @@
 </template>
 
 <script setup lang="ts">
-const fixed = computed(() => useWindowScroll().y.value > 0)
-watchEffect(() => {
-  console.log(fixed.value)
-})
+const scrolled = computed(() => useWindowScroll().y.value > 0)
 </script>
 
 <style lang="scss" scoped>

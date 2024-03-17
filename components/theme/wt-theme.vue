@@ -1,12 +1,10 @@
 <template>
-  <client-only>
-    <span
-      class="theme-icon"
-      :class="icon"
-      @click="toggleTheme($colorMode.value)"
-      :style="{ fontSize: size }"
-    ></span>
-  </client-only>
+  <span
+    class="theme-icon"
+    :class="icon"
+    @click="toggleTheme($colorMode.value)"
+    :style="{ fontSize: size }"
+  ></span>
 </template>
 
 <script setup lang="ts">

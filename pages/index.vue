@@ -6,7 +6,9 @@
       </animated-underline>
       <h1 class="title-primary">Warframe Team</h1>
     </div>
-    <div><el-button type="primary">开始</el-button></div>
+    <nuxt-link to="/fissure">
+      <el-button type="primary"><span class="font-small">开始</span></el-button>
+    </nuxt-link>
     <wt-features class="pt-67px" />
   </section>
 </template>
