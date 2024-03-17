@@ -13,15 +13,15 @@ withDefaults(defineProps<{ size?: string }>(), {
   size: '1rem'
 })
 const theme = useColorMode()
-const icon = computed(() => {
-  return theme.value === THEMES.DARK
+const icon = computed(() =>
+  theme.value === THEMES.DARK
     ? 'i-mdi:weather-night'
     : 'i-mdi:white-balance-sunny'
-})
-const toggleTheme = (current_theme: string) => {
-  if (current_theme === THEMES.DARK) return (theme.preference = THEMES.LIGHT)
-  else return (theme.preference = THEMES.DARK)
-}
+)
+const toggleTheme = (current_theme: string) =>
+  current_theme === THEMES.DARK
+    ? (theme.preference = THEMES.LIGHT)
+    : (theme.preference = THEMES.DARK)
 </script>
 
 <style lang="scss" scoped>
