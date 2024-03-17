@@ -39,15 +39,17 @@ const fetchData = (url: string, data: any) => {
 }
 
 const addProperty = (fissure: Fissure[]) => {
-  return fissure.map((fissure) => {
-    return { ...fissure, subscribed: false }
-  })
+  fissure.forEach((item) => console.log(item))
+  return fissure
+    .sort((a, b) => a.tierNum - b.tierNum)
+    .map((fissure) => {
+      return { ...fissure, subscribed: false }
+    })
 }
 
 const fillSteelPath = (fissure: Fissure[]) => {
   fissure
     .filter((fissure) => fissure.isHard)
-    .sort((a, b) => a.tierNum - b.tierNum)
     .forEach((hard) => steelPath.push(hard))
   return fissure
 }
@@ -55,7 +57,6 @@ const fillSteelPath = (fissure: Fissure[]) => {
 const fillEmpyrean = (fissure: Fissure[]) => {
   fissure
     .filter((fissure) => fissure.isStorm)
-    .sort((a, b) => a.tierNum - b.tierNum)
     .forEach((hard) => empyrean.push(hard))
   return fissure
 }
@@ -64,7 +65,6 @@ const fillOrigin = (fissure: Fissure[]) => {
   fissure
     .filter((fissure) => !fissure.isStorm)
     .filter((fissure) => !fissure.isHard)
-    .sort((a, b) => a.tierNum - b.tierNum)
     .forEach((normal) => origin.push(normal))
 }
 
