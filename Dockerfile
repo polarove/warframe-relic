@@ -4,4 +4,4 @@ COPY . /app/
 RUN ["corepack","enable","pnpm"]
 RUN ["pnpm", "i"]
 RUN ["pnpm", "build"]
-RUN ["node", "/app/server/index.mjs"]
+RUN ["node", "/app/.output/server/index.mjs"]
