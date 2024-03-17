@@ -1,6 +1,6 @@
 FROM node:21.4.0 AS build
 WORKDIR /app
-RUN corepack enble pnpm
+RUN corepack enable pnpm
 RUN pnpm install && pnpm build
 
 FROM node:21.4.0 AS final
