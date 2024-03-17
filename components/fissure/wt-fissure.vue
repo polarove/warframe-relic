@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section v-loading="loading">
     <h1>{{ title }}</h1>
     <el-row :gutter="24">
       <el-col
@@ -27,10 +27,12 @@
 <script setup lang="ts">
 import type { Fissure } from '~/types/fissure'
 
-defineProps<{
+const props = defineProps<{
   title: string
   fissures: Fissure[]
 }>()
+
+const loading = computed(() => props.fissures.length <= 0)
 </script>
 
 <style lang="scss" scoped></style>
