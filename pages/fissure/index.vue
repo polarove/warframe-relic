@@ -39,7 +39,6 @@ const fetchData = (url: string, data: any) => {
 }
 
 const addProperty = (fissure: Fissure[]) => {
-  fissure.forEach((item) => console.log(item))
   return fissure
     .sort((a, b) => a.tierNum - b.tierNum)
     .map((fissure) => {
