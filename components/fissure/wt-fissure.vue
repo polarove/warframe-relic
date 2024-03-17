@@ -5,10 +5,11 @@
       <el-col
         v-for="fissure in fissures"
         :xs="24"
-        :sm="8"
-        :md="6"
-        :xl="6"
-        pb="40px"
+        :sm="12"
+        :md="8"
+        :lg="6"
+        :xl="4"
+        pb="20px"
       >
         <rotate-card>
           <el-card class="m-10px">
