@@ -28,13 +28,10 @@
   },
   "devDependencies": {
     "@commitlint/cli": "latest",
-    "@commitlint/config-conventional": "latest",
     "@cz-translated-changelog/zh-cn": "^0.0.18",
-    "@esbuild-kit/cjs-loader": "latest",
     "@vueuse/core": "^10.9.0",
     "@vueuse/nuxt": "^10.9.0",
     "commitizen": "latest",
-    "fast-glob": "latest",
     "husky": "latest",
     "sass": "^1.71.1"
   },
