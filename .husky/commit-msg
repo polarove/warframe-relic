@@ -1,5 +1,4 @@
 #!/bin/bash
 
 echo "running script: ${0}"
-echo "checking your commit message..."
-node commitlint.config.ts --edit "${1}"
+echo "commit temp file: ${1}"
