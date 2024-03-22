@@ -1,7 +1,7 @@
 // This config is referenced from element-plus
 // reference: https://github.com/element-plus/element-plus/blob/dev/commitlint.config.ts
 
-import { execSync } from 'child_process'
+// import { execSync } from 'child_process'
 import fg from 'fast-glob'
 
 const getPackages = (packagePath: string) =>
@@ -9,38 +9,32 @@ const getPackages = (packagePath: string) =>
 
 const scopes = [
   ...getPackages('packages'),
-  'project',
-  'style',
-  'styles',
-  'page',
-  'pages',
-  'component',
-  'components',
-  'translation',
-  'translations',
-  'comment',
-  'comments',
+  '项目',
+  '页面',
+  '组件',
+  '翻译',
+  '注释',
+  '开发',
+  '部署',
+  '文档',
   'ci',
-  'dev',
-  'deploy',
-  'doc',
-  'other'
+  '其他'
 ]
 
-const gitStatus = execSync('git status --porcelain || true')
-  .toString()
-  .trim()
-  .split('\n')
+// const gitStatus = execSync('git status --porcelain || true')
+//   .toString()
+//   .trim()
+//   .split('\n')
 
-const scopeComplete = gitStatus
-  .find((r) => ~r.indexOf('M  packages'))
-  ?.replace(/\//g, '%%')
-  ?.match(/packages%%((\w|-)*)/)?.[1]
+// const scopeComplete = gitStatus
+//   .find((r) => ~r.indexOf('M  packages'))
+//   ?.replace(/\//g, '%%')
+//   ?.match(/packages%%((\w|-)*)/)?.[1]
 
-const subjectComplete = gitStatus
-  .find((r) => ~r.indexOf('M  packages/gt-admin'))
-  ?.replace(/\//g, '%%')
-  ?.match(/packages%%gt-admin%%((\w|-)*)/)?.[1]
+// const subjectComplete = gitStatus
+//   .find((r) => ~r.indexOf('M  packages/gt-admin'))
+//   ?.replace(/\//g, '%%')
+//   ?.match(/packages%%gt-admin%%((\w|-)*)/)?.[1]
 
 export default {
   rules: {
@@ -70,14 +64,14 @@ export default {
      */
     'header-max-length': [2, 'always', 84],
     'scope-case': [2, 'always', 'lower-case'],
-    'subject-case': [
-      1,
-      'never',
-      ['sentence-case', 'start-case', 'pascal-case', 'upper-case']
-    ],
+    // 'subject-case': [
+    //   1,
+    //   'never',
+    //   ['sentence-case', 'start-case', 'pascal-case', 'upper-case']
+    // ],
     'subject-empty': [2, 'never'],
     'subject-full-stop': [2, 'never', '.'],
-    'type-case': [2, 'always', 'lower-case'],
+    // 'type-case': [2, 'always', 'lower-case'],
     'type-empty': [2, 'never'],
     /**
      * type[scope]: [function] description
@@ -87,27 +81,26 @@ export default {
       2,
       'always',
       [
-        'build',
-        'chore',
+        '功能',
+        '修复',
+        '发布',
+        '测试',
+        '文档',
+        '格式',
+        '重构',
+        '优化',
+        '构建',
         'ci',
-        'docs',
-        'feat',
-        'fix',
-        'perf',
-        'refactor',
-        'revert',
-        'release',
-        'style',
-        'test',
-        'improvement'
+        '撤回',
+        '其他'
       ]
     ]
-  },
-  prompt: {
-    defaultScope: scopeComplete,
-    customScopesAlign: !scopeComplete ? 'top' : 'bottom',
-    defaultSubject: subjectComplete && `[${subjectComplete}] `,
-    allowCustomIssuePrefixs: false,
-    allowEmptyIssuePrefixs: false
   }
+  // prompt: {
+  //   defaultScope: scopeComplete,
+  //   customScopesAlign: !scopeComplete ? 'top' : 'bottom',
+  //   defaultSubject: subjectComplete && `[${subjectComplete}] `,
+  //   allowCustomIssuePrefixs: false,
+  //   allowEmptyIssuePrefixs: false
+  // }
 }
