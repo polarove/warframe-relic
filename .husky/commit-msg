@@ -2,4 +2,4 @@
 
 echo "running script: ${0}"
 echo "checking your commit message..."
-yarn run commitlint --config commitlint.config.js --edit "${1}"
+node commitlint.config.js --edit "${1}"
