@@ -50,8 +50,8 @@ dependencies:
 
 devDependencies:
   '@cz-translated-changelog/zh-cn':
-    specifier: ^0.0.18
-    version: 0.0.18(@types/node@20.11.28)(typescript@5.4.2)
+    specifier: ^0.0.29
+    version: 0.0.29(@types/node@20.11.28)(commitizen@4.3.0)(typescript@5.4.2)
   '@vueuse/core':
     specifier: ^10.9.0
     version: 10.9.0(vue@3.4.21)
@@ -482,9 +482,11 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
-  /@cz-translated-changelog/zh-cn@0.0.18(@types/node@20.11.28)(typescript@5.4.2):
-    resolution: {integrity: sha512-ruSci+KcjkmxyxpKCKWwkZ8qN2i0ypXuDWd97l8NtZBOjedJQWvp//BIG6zMDeG/K3nKH+aixFS3ygo8+N03oQ==}
+  /@cz-translated-changelog/zh-cn@0.0.29(@types/node@20.11.28)(commitizen@4.3.0)(typescript@5.4.2):
+    resolution: {integrity: sha512-sr+J2bkQS7XPOO9XsW1NCTwemCnvt3pZMceEavZcrN14OpHo2i3XS2L/ah2oAdFaJ7FN4jj1TOE2Aihl8xbhLw==}
     engines: {node: '>= 10'}
+    peerDependencies:
+      commitizen: '>=4.0.0'
     dependencies:
       chalk: 2.4.2
       commitizen: 4.3.0(@types/node@20.11.28)(typescript@5.4.2)

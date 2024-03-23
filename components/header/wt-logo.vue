@@ -4,7 +4,9 @@
   </span>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+// nuxt-icon 有问题
+</script>
 
 <style lang="scss" scoped>
 .wt-logo {

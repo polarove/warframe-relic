@@ -1,10 +1,25 @@
 <template>
   <div transition="all">
-    <wt-fissure title="始源星系" :fissures="origin" class="min-h-50vh" />
+    <wt-fissure
+      title="始源星系"
+      :fissures="origin"
+      class="min-h-50vh"
+      v-loading="loading.origin"
+    />
     <el-divider />
-    <wt-fissure title="钢铁之路" :fissures="steelPath" class="min-h-50vh" />
+    <wt-fissure
+      title="钢铁之路"
+      :fissures="steelPath"
+      class="min-h-50vh"
+      v-loading="loading.steelPath"
+    />
     <el-divider />
-    <wt-fissure title="九重天" :fissures="empyrean" class="min-h-50vh" />
+    <wt-fissure
+      title="九重天"
+      :fissures="empyrean"
+      class="min-h-50vh"
+      v-loading="loading.empyrean"
+    />
   </div>
 </template>
 
@@ -22,6 +37,12 @@ useHead({
 const origin = reactive<Fissure[]>([])
 const steelPath = reactive<Fissure[]>([])
 const empyrean = reactive<Fissure[]>([])
+
+const loading = reactive({
+  origin: true,
+  steelPath: true,
+  empyrean: true
+})
 
 const fetchData = (url: string, data: any) => {
   useFetch(url, data)
@@ -50,6 +71,7 @@ const fillSteelPath = (fissure: Fissure[]) => {
   fissure
     .filter((fissure) => fissure.isHard)
     .forEach((hard) => steelPath.push(hard))
+  loading.steelPath = false
   return fissure
 }
 
@@ -57,6 +79,7 @@ const fillEmpyrean = (fissure: Fissure[]) => {
   fissure
     .filter((fissure) => fissure.isStorm)
     .forEach((hard) => empyrean.push(hard))
+  loading.empyrean = false
   return fissure
 }
 
@@ -65,6 +88,7 @@ const fillOrigin = (fissure: Fissure[]) => {
     .filter((fissure) => !fissure.isStorm)
     .filter((fissure) => !fissure.isHard)
     .forEach((normal) => origin.push(normal))
+  loading.origin = false
 }
 
 const handleError = (_: unknown) => {

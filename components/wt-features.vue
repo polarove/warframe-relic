@@ -1,6 +1,14 @@
 <template>
   <el-row :gutter="14">
-    <el-col :xs="24" :sm="12" :md="8" :xl="6" class="item" v-for="item in 2">
+    <el-col
+      :xs="24"
+      :sm="12"
+      :md="8"
+      :xl="6"
+      class="item"
+      :key="index"
+      v-for="(feature, index) in 1"
+    >
       <nuxt-link to="/fissure" style="text-decoration: none">
         <el-card>
           <p>裂缝</p>
