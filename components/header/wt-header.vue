@@ -1,12 +1,15 @@
 <template>
   <section class="wt-header" :class="{ shadow: scrolled }">
     <el-row justify="space-between" items="center" h="100%">
-      <el-col :span="4">
+      <el-col :span="22">
         <nuxt-link to="/" class="home">
           <wt-logo />
         </nuxt-link>
       </el-col>
-      <el-col :span="4" flex="end" items="center">
+      <el-col :span="1" flex="end" items="center">
+        <wt-avatar />
+      </el-col>
+      <el-col :span="1" flex="end" items="center">
         <wt-theme size="1.3rem" />
       </el-col>
     </el-row>
