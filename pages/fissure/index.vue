@@ -1,27 +1,39 @@
 <template>
   <div transition="all">
     <wt-fissure
-      title="始源星系"
+      title="origin"
       :fissures="origin"
       class="min-h-50vh"
       v-loading="originState.loading"
       :is-empty="originState.empty"
+      @subscribe="
+        (fissure: Fissure, index: number, title: string) =>
+          handleSubscribe(fissure, index, title)
+      "
     />
     <el-divider />
     <wt-fissure
-      title="钢铁之路"
+      title="steelPath"
       :fissures="steelPath"
       class="min-h-50vh"
       v-loading="steelPathState.loading"
       :is-empty="steelPathState.empty"
+      @subscribe="
+        (fissure: Fissure, index: number, title: string) =>
+          handleSubscribe(fissure, index, title)
+      "
     />
     <el-divider />
     <wt-fissure
-      title="九重天"
+      title="empyrean"
       :fissures="empyrean"
       class="min-h-50vh"
       v-loading="empyreanState.loading"
       :is-empty="empyreanState.empty"
+      @subscribe="
+        (fissure: Fissure, index: number, title: string) =>
+          handleSubscribe(fissure, index, title)
+      "
     />
   </div>
   <client-only>
@@ -125,6 +137,10 @@ const fillOrigin = (fissures: Fissure[]) => {
     .filter((fissure) => !fissure.isHard)
     .forEach((normal) => origin.push(normal))
   originState.loading = false
+}
+
+const handleSubscribe = (fissure: Fissure, index: number, title: string) => {
+  console.log(index, title, fissure)
 }
 
 interface FissureRequest {

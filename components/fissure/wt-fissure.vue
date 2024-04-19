@@ -1,6 +1,6 @@
 <template>
   <section>
-    <h1>{{ title }}</h1>
+    <h1>{{ map.get(title) }}</h1>
     <el-empty v-if="isEmpty" description="空">
       <template #image>
         <nuxt-icon name="state/empty" />
@@ -8,7 +8,7 @@
     </el-empty>
     <el-row :gutter="24" v-else>
       <el-col
-        v-for="fissure in fissures"
+        v-for="(fissure, index) in fissures"
         :xs="24"
         :sm="12"
         :md="8"
@@ -27,7 +27,10 @@
                       ? 'var(--el-color-primary)'
                       : undefined
                   }"
-                  @click="(el: MouseEvent) => toggleSubscribe(el, fissure)"
+                  @click="
+                    (el: MouseEvent) =>
+                      toggleSubscribe(el, fissure, index, title)
+                  "
                 ></div>
               </div>
             </template>
@@ -48,12 +51,15 @@
 
 <script setup lang="ts">
 import type { Fissure } from '~/types/fissure'
-import { useElementTransform } from '@vueuse/motion'
 defineProps<{
   title: string
   fissures: Fissure[]
   isEmpty: boolean
 }>()
+const map = new Map<string, string>()
+map.set('origin', '始源星系')
+map.set('steelPath', '钢铁之路')
+map.set('empyrean', '九重天')
 
 const getTimestamp = (dateStr: string) => new Date(dateStr).getTime()
 const emits = defineEmits(['finish', 'settings', 'subscribe'])
@@ -64,8 +70,18 @@ const handleFinish = (fissure: Fissure) => {
   emits('finish', fissure)
 }
 
-const toggleSubscribe = (el: MouseEvent, fissure: Fissure) => {
-  emits('subscribe', fissure)
+const toggleSubscribe = (
+  el: MouseEvent,
+  fissure: Fissure,
+  index: number,
+  title: string
+) => {
+  emits('subscribe', fissure, index, title)
+  const target = el.target as HTMLElement
+  target.classList.add('belling')
+  setTimeout(() => {
+    target.classList.remove('belling')
+  }, 835)
 }
 </script>
 
@@ -92,5 +108,19 @@ const toggleSubscribe = (el: MouseEvent, fissure: Fissure) => {
 }
 .operation.bell.subscribed {
   color: var(--el-color-primary);
+}
+
+.belling {
+  animation: swing 167ms ease-in-out infinite;
+  transform-origin: center top;
+
+  @keyframes swing {
+    from {
+      transform: rotate(-10deg);
+    }
+    to {
+      transform: rotate(10deg);
+    }
+  }
 }
 </style>
