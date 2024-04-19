@@ -1,7 +1,12 @@
 <template>
   <section>
     <h1>{{ title }}</h1>
-    <el-row :gutter="24">
+    <el-empty v-if="isEmpty" description="空">
+      <template #image>
+        <nuxt-icon name="state/empty" />
+      </template>
+    </el-empty>
+    <el-row :gutter="24" v-else>
       <el-col
         v-for="fissure in fissures"
         :xs="24"
@@ -38,6 +43,7 @@ import type { Fissure } from '~/types/fissure'
 defineProps<{
   title: string
   fissures: Fissure[]
+  isEmpty: boolean
 }>()
 
 const getTimestamp = (dateStr: string) => new Date(dateStr).getTime()
@@ -50,4 +56,9 @@ const handleFinish = (fissure: Fissure) => {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep(.nuxt-icon svg) {
+  width: 10em;
+  height: 10em;
+}
+</style>

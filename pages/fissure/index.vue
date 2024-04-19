@@ -4,21 +4,24 @@
       title="始源星系"
       :fissures="origin"
       class="min-h-50vh"
-      v-loading="loading.origin"
+      v-loading="originState.loading"
+      :is-empty="originState.empty"
     />
     <el-divider />
     <wt-fissure
       title="钢铁之路"
       :fissures="steelPath"
       class="min-h-50vh"
-      v-loading="loading.steelPath"
+      v-loading="steelPathState.loading"
+      :is-empty="steelPathState.empty"
     />
     <el-divider />
     <wt-fissure
       title="九重天"
       :fissures="empyrean"
       class="min-h-50vh"
-      v-loading="loading.empyrean"
+      v-loading="empyreanState.loading"
+      :is-empty="empyreanState.empty"
     />
   </div>
 </template>
@@ -28,6 +31,7 @@ import { API } from '~/constants'
 import { ElMessage } from 'element-plus'
 import type { Fissure } from '~/types/fissure'
 import { LANGUAGE, PLATFORM } from '~/enums'
+import { ListUtil } from '@polaris_liu/toolcat'
 
 useHead({
   title: '裂缝 | warframe-team',
@@ -38,10 +42,19 @@ const origin = reactive<Fissure[]>([])
 const steelPath = reactive<Fissure[]>([])
 const empyrean = reactive<Fissure[]>([])
 
-const loading = reactive({
-  origin: true,
-  steelPath: true,
-  empyrean: true
+const originState = reactive({
+  loading: true,
+  empty: false
+})
+
+const steelPathState = reactive({
+  loading: true,
+  empty: false
+})
+
+const empyreanState = reactive({
+  loading: true,
+  empty: false
 })
 
 const fetchData = (url: string, data: any) => {
@@ -68,32 +81,43 @@ const addProperty = (fissure: Fissure[]) => {
 }
 
 const fillSteelPath = (fissure: Fissure[]) => {
+  if (ListUtil.isEmpty(fissure)) {
+    steelPathState.empty = true
+    return []
+  }
   fissure
     .filter((fissure) => fissure.isHard)
     .forEach((hard) => steelPath.push(hard))
-  loading.steelPath = false
+  steelPathState.loading = false
   return fissure
 }
 
 const fillEmpyrean = (fissure: Fissure[]) => {
+  if (ListUtil.isEmpty(fissure)) {
+    empyreanState.empty = true
+    return []
+  }
   fissure
     .filter((fissure) => fissure.isStorm)
     .forEach((hard) => empyrean.push(hard))
-  loading.empyrean = false
+  empyreanState.loading = false
   return fissure
 }
 
 const fillOrigin = (fissure: Fissure[]) => {
+  if (ListUtil.isEmpty(fissure)) {
+    originState.empty = true
+    return []
+  }
   fissure
     .filter((fissure) => !fissure.isStorm)
     .filter((fissure) => !fissure.isHard)
     .forEach((normal) => origin.push(normal))
-  loading.origin = false
+  originState.loading = false
 }
 
-const handleError = (_: unknown) => {
+const handleError = (_: unknown) =>
   ElMessage.error('[数据错误]：处理裂缝数据时发生意外错误')
-}
 
 const initData = (
   platform: PLATFORM = PLATFORM.PC,
