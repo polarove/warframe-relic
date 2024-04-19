@@ -20,19 +20,20 @@
             <template #header>
               <div class="flex-between">
                 <span>{{ fissure.node }} - {{ fissure.missionType }}</span>
-                <div>
-                  <div
-                    class="i-ep:setting w-1.3em h-1.3em operation setting"
-                    @click="toggleSettings(fissure)"
-                  ></div>
-                  <div
-                    class="i-ep:bell w-1.3em h-1.3em operation bell"
-                    :class="fissure.subscribed && 'subscribed'"
-                    @click="toggleSubscribe(fissure)"
-                  ></div>
-                </div>
+                <div
+                  class="i-ep:bell w-1.3em h-1.3em operation bell"
+                  :style="{
+                    color: fissure.subscribed
+                      ? 'var(--el-color-primary)'
+                      : undefined
+                  }"
+                  @click="(el: MouseEvent) => toggleSubscribe(el, fissure)"
+                ></div>
               </div>
             </template>
+            <div>
+              {{ fissure.tier }}
+            </div>
             <el-countdown
               title="剩余时间"
               :value="getTimestamp(fissure.expiry)"
@@ -47,6 +48,7 @@
 
 <script setup lang="ts">
 import type { Fissure } from '~/types/fissure'
+import { useElementTransform } from '@vueuse/motion'
 defineProps<{
   title: string
   fissures: Fissure[]
@@ -62,16 +64,12 @@ const handleFinish = (fissure: Fissure) => {
   emits('finish', fissure)
 }
 
-const toggleSettings = (fissure: Fissure) => emits('settings', fissure)
-const toggleSubscribe = (fissure: Fissure) => emits('subscribe', fissure)
+const toggleSubscribe = (el: MouseEvent, fissure: Fissure) => {
+  emits('subscribe', fissure)
+}
 </script>
 
 <style lang="scss" scoped>
-:deep(.nuxt-icon svg) {
-  width: 10em;
-  height: 10em;
-}
-
 .operation {
   cursor: pointer;
   &:hover {

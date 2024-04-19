@@ -27,7 +27,7 @@ const scrolled = computed(() => useWindowScroll().y.value > 0)
   position: fixed;
   right: 0;
   top: 0;
-  z-index: 999;
+  z-index: 2001;
   height: 57px;
   .home {
     color: var(--el-text-color-regular);

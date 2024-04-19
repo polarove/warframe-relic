@@ -24,7 +24,9 @@
       :is-empty="empyreanState.empty"
     />
   </div>
-  <el-dialog></el-dialog>
+  <client-only>
+    <el-dialog></el-dialog>
+  </client-only>
 </template>
 
 <script setup lang="ts">
@@ -58,77 +60,85 @@ const empyreanState = reactive({
   empty: false
 })
 
-const fetchData = (url: string, data: any) => {
-  useFetch(url, data)
-    .then((res) => {
-      if (res.error.value) {
-        console.error(res.error.value?.cause)
-        return Promise.reject(`[请求失败]: ${res.error.value?.data.error}`)
-      } else return Promise.resolve(unref(res.data) as Fissure[])
-    })
+const fetchData = (url: string, data: FissureRequest) => {
+  const handleRequest = (res: any) => {
+    if (res.error.value) {
+      console.error(res.error.value?.cause)
+      return Promise.reject(`[请求失败]: ${res.error.value?.data.error}`)
+    } else return Promise.resolve(unref(res.data))
+  }
+
+  const handleError = (_: unknown) => {
+    ElMessage.error('[数据错误]：处理裂缝数据时发生意外错误')
+  }
+
+  useFetch<Fissure[]>(url, data)
+    .then((res) => handleRequest(res))
     .then((res) => addProperty(res))
+    .then((res) => pickValid(res))
     .then((modified) => fillSteelPath(modified))
     .then((leftover) => fillEmpyrean(leftover))
     .then((leftover) => fillOrigin(leftover))
     .catch((err) => handleError(err))
 }
 
-const addProperty = (fissure: Fissure[]) => {
-  return fissure
+const addProperty = (fissures: Fissure[]) => {
+  return fissures
     .sort((a, b) => a.tierNum - b.tierNum)
     .map((fissure) => {
       return { ...fissure, subscribed: false }
     })
 }
 
-const fillSteelPath = (fissure: Fissure[]) => {
-  if (ListUtil.isEmpty(fissure)) {
-    steelPathState.empty = true
-    return []
-  }
-  fissure
+const pickValid = (fissures: Fissure[]) => {
+  return Promise.resolve(
+    fissures.filter(
+      (fissure) =>
+        new Date().getTime() < new Date(fissure.expiry).getTime() ||
+        fissure.active
+    )
+  )
+}
+
+const fillSteelPath = (fissures: Fissure[]) => {
+  if (ListUtil.isEmpty(fissures)) steelPathState.empty = true
+  fissures
     .filter((fissure) => fissure.isHard)
     .forEach((hard) => steelPath.push(hard))
   steelPathState.loading = false
-  return fissure
+  return Promise.resolve(fissures)
 }
 
-const fillEmpyrean = (fissure: Fissure[]) => {
-  if (ListUtil.isEmpty(fissure)) {
-    empyreanState.empty = true
-    return []
-  }
-  fissure
+const fillEmpyrean = (fissures: Fissure[]) => {
+  if (ListUtil.isEmpty(fissures)) empyreanState.empty = true
+  fissures
     .filter((fissure) => fissure.isStorm)
     .forEach((hard) => empyrean.push(hard))
   empyreanState.loading = false
-  return fissure
+  return Promise.resolve(fissures)
 }
 
-const fillOrigin = (fissure: Fissure[]) => {
-  if (ListUtil.isEmpty(fissure)) {
-    originState.empty = true
-    return []
-  }
-  fissure
+const fillOrigin = (fissures: Fissure[]) => {
+  if (ListUtil.isEmpty(fissures)) originState.empty = true
+  fissures
     .filter((fissure) => !fissure.isStorm)
     .filter((fissure) => !fissure.isHard)
     .forEach((normal) => origin.push(normal))
   originState.loading = false
 }
 
-const handleError = (_: unknown) =>
-  ElMessage.error('[数据错误]：处理裂缝数据时发生意外错误')
+interface FissureRequest {
+  query: { language: string }
+}
 
 const initData = (
   platform: PLATFORM = PLATFORM.PC,
   language: LANGUAGE = LANGUAGE.ZH
 ) => {
   const url = API.concat('/').concat(platform).concat('/').concat('fissures')
-  const data = {
+  fetchData(url, {
     query: { language }
-  }
-  fetchData(url, data)
+  })
 }
 initData()
 
