@@ -15,7 +15,17 @@ export default defineNuxtConfig({
     '@unocss/nuxt',
     '@vueuse/nuxt',
     'nuxt-icons',
-    '@pinia/nuxt',
+    [
+      '@pinia/nuxt',
+      {
+        autoImports: [
+          // 自动引入 `defineStore()`
+          'defineStore',
+          // 自动引入 `defineStore()` 并重命名为 `definePiniaStore()`
+          ['defineStore', 'definePiniaStore']
+        ]
+      }
+    ],
     '@vueuse/motion/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
     ['@element-plus/nuxt', { importStyle: 'scss', themes: ['dark'] }]

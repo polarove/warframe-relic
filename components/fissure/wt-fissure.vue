@@ -1,6 +1,6 @@
 <template>
   <section>
-    <h1>{{ map.get(title) }}</h1>
+    <h1>{{ title }}</h1>
     <el-empty v-if="isEmpty" description="空">
       <template #image>
         <nuxt-icon name="state/empty" />
@@ -50,16 +50,13 @@
 </template>
 
 <script setup lang="ts">
+import { useFissureSubStore } from '~/store'
 import type { Fissure } from '~/types/fissure'
 defineProps<{
   title: string
   fissures: Fissure[]
   isEmpty: boolean
 }>()
-const map = new Map<string, string>()
-map.set('origin', '始源星系')
-map.set('steelPath', '钢铁之路')
-map.set('empyrean', '九重天')
 
 const getTimestamp = (dateStr: string) => new Date(dateStr).getTime()
 const emits = defineEmits(['finish', 'settings', 'subscribe'])
@@ -77,11 +74,77 @@ const toggleSubscribe = (
   title: string
 ) => {
   emits('subscribe', fissure, index, title)
-  const target = el.target as HTMLElement
-  target.classList.add('belling')
-  setTimeout(() => {
-    target.classList.remove('belling')
-  }, 835)
+  const { subs } = useFissureSubStore()
+
+  const shakingBell = async () => {
+    const target = el.target as HTMLElement
+    target.classList.add('belling')
+    setTimeout(() => {
+      target.classList.remove('belling')
+    }, 835)
+    return Promise.resolve()
+  }
+
+  const checkSubState = async () => {
+    if (subs.includes(fissure)) return Promise.reject('已订阅该裂缝，进行修改')
+    else return Promise.resolve('尚未订阅该裂缝，进行订阅')
+  }
+
+  const freshSub = async () => {
+    ElMessageBox.confirm(h('div', '我去'), '订阅', {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消'
+    })
+      .then(() => notifyAfterSubscribe())
+      .catch(() => {
+        ElMessage({
+          type: 'info',
+          message: '订阅取消'
+        })
+      })
+  }
+
+  const modifySub = async () => {
+    ElMessageBox.confirm('23', '修改订阅', {
+      confirmButtonText: '修改',
+      cancelButtonText: '取消',
+      type: 'info'
+    })
+      .then(() => notifyAfterSubscribe())
+      .catch(() => {
+        ElMessage({
+          type: 'info',
+          message: '订阅取消'
+        })
+      })
+  }
+
+  const notifyAfterSubscribe = async () => {
+    ElNotification({
+      title: '裂缝订阅',
+      message: h('div', null, [
+        '您已成功订阅',
+        h(
+          'div',
+          { style: 'color:var(--el-color-primary)' },
+          title
+            .concat('-')
+            .concat(fissure.tier)
+            .concat('-')
+            .concat(fissure.node)
+        )
+      ])
+    })
+    return Promise.resolve()
+  }
+
+  shakingBell()
+    .then(() => checkSubState())
+    .then(() => freshSub())
+    .catch((err) => {
+      console.log(err)
+      modifySub()
+    })
 }
 </script>
 
