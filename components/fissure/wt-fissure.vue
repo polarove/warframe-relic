@@ -20,12 +20,19 @@
             <template #header>
               <div class="flex-between">
                 <span>{{ fissure.node }} - {{ fissure.missionType }}</span>
-                <span>{{ fissure.tier }}</span>
+                <div>
+                  <div
+                    class="i-ep:setting w-1.3em h-1.3em operation setting"
+                    @click="toggleSettings(fissure)"
+                  ></div>
+                  <div
+                    class="i-ep:bell w-1.3em h-1.3em operation bell"
+                    :class="fissure.subscribed && 'subscribed'"
+                    @click="toggleSubscribe(fissure)"
+                  ></div>
+                </div>
               </div>
             </template>
-            <div class="font-small">
-              {{ fissure.subscribed ? '已订阅' : '未订阅' }}
-            </div>
             <el-countdown
               title="剩余时间"
               :value="getTimestamp(fissure.expiry)"
@@ -47,18 +54,45 @@ defineProps<{
 }>()
 
 const getTimestamp = (dateStr: string) => new Date(dateStr).getTime()
-const emits = defineEmits(['finish'])
+const emits = defineEmits(['finish', 'settings', 'subscribe'])
 const handleFinish = (fissure: Fissure) => {
   console.log(
     fissure.node.concat(' - ').concat(fissure.missionType).concat('已经过期')
   )
   emits('finish', fissure)
 }
+
+const toggleSettings = (fissure: Fissure) => emits('settings', fissure)
+const toggleSubscribe = (fissure: Fissure) => emits('subscribe', fissure)
 </script>
 
 <style lang="scss" scoped>
 :deep(.nuxt-icon svg) {
   width: 10em;
   height: 10em;
+}
+
+.operation {
+  cursor: pointer;
+  &:hover {
+    color: var(--el-color-primary);
+  }
+}
+.operation.setting {
+  &:hover {
+    animation: rotate 2s linear infinite;
+  }
+  @keyframes rotate {
+    from {
+      transform: rotate(0);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+.operation.bell.subscribed {
+  color: var(--el-color-primary);
 }
 </style>

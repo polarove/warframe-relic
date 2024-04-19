@@ -1,6 +1,8 @@
 <template>
   <client-only> <wt-header /> </client-only>
-  <nuxt-page class="lg:px-8rem lg:py-4rem lt-lg:px-2em lt-lg:py-4em" />
+  <div class="lg:px-8rem lg:py-4rem lt-lg:px-2em lt-lg:py-4em">
+    <nuxt-page />
+  </div>
 </template>
 
 <script setup lang="ts"></script>

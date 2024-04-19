@@ -7,9 +7,9 @@
       :xl="6"
       class="item"
       :key="index"
-      v-for="(feature, index) in 1"
+      v-for="(feature, index) in features"
     >
-      <nuxt-link to="/fissure" style="text-decoration: none">
+      <nuxt-link :to="feature.path" style="text-decoration: none">
         <el-card>
           <p>裂缝</p>
           <p>始源星系 / 钢铁之路 / 九重天</p>
@@ -19,7 +19,9 @@
   </el-row>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const features = [{ name: '裂缝', path: '/fissure' }]
+</script>
 
 <style lang="scss" scoped>
 .item {

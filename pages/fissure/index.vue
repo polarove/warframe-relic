@@ -24,6 +24,7 @@
       :is-empty="empyreanState.empty"
     />
   </div>
+  <el-dialog></el-dialog>
 </template>
 
 <script setup lang="ts">
