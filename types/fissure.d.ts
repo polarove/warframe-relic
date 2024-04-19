@@ -2,6 +2,7 @@ import { RELIC_TIER, RELIC_TIER_NUMBER } from '~/apis/enums'
 
 export interface Subscribe {
   subscribed: boolean
+  panel: boolean
 }
 
 export interface Fissure extends Subscribe {

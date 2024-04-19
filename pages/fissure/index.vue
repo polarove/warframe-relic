@@ -86,7 +86,7 @@ const addProperty = (fissures: Fissure[]) => {
   return fissures
     .sort((a, b) => a.tierNum - b.tierNum)
     .map((fissure) => {
-      return { ...fissure, subscribed: false }
+      return { ...fissure, subscribed: false, panel: false }
     })
 }
 
