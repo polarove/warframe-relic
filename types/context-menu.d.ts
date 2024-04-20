@@ -1,8 +1,5 @@
-export interface ContextMenu {
+import type { ContextMenuItem } from '~/components/context-menu/types'
+export interface ContextMenuOptions extends ContextMenuItem {
   label: string
-}
-
-export interface ContextMenuItem {
-  label: string
-  type: 'title' | 'option'
+  fn?: Function
 }

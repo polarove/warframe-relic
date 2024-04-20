@@ -1,13 +1,20 @@
 <template>
-  <div class="context-menu__item" :class="type">
+  <div class="context-menu__item" :class="type" @click="handleClick()">
     <slot></slot>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  type: 'title' | 'option'
-}>()
+import type { ContextMenuItem } from './types'
+defineProps<ContextMenuItem>()
+
+const closeMenu = inject('closeMenu') as Function
+const emits = defineEmits(['select'])
+
+const handleClick = () => {
+  emits('select')
+  closeMenu()
+}
 </script>
 
 <style lang="scss" scoped>
@@ -40,3 +47,4 @@ defineProps<{
   border-bottom: var(--context-menu-item-border);
 }
 </style>
+~/components/context-menu/context-menu

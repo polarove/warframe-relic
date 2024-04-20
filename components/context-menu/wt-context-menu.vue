@@ -18,21 +18,10 @@
 </template>
 
 <script lang="ts" setup>
-import type { ContextMenu } from '~/types/context-menu'
+import type { ContextMenu } from './types'
 import { useContextMenu } from './useContextMenu'
 
-withDefaults(
-  defineProps<{
-    menu?: ContextMenu[]
-  }>(),
-  {
-    menu: () => [
-      { label: '选项', type: 'title' },
-      { label: '选项一', type: 'option' },
-      { label: '选项二', type: 'option' }
-    ]
-  }
-)
+withDefaults(defineProps<ContextMenu>(), { singleton: false })
 
 const emit = defineEmits(['select'])
 const target = () => document.getElementById('wt-context-menu-container')
@@ -44,11 +33,7 @@ const { x, y, visible, closeMenu } = useContextMenu(
   contextMenuSelf
 )
 
-const handleClick = (callback: (() => void) | undefined) => {
-  emit('select')
-  if (callback) callback()
-  closeMenu()
-}
+provide('closeMenu', closeMenu)
 </script>
 
 <style lang="scss" scoped>
@@ -65,3 +50,4 @@ const handleClick = (callback: (() => void) | undefined) => {
   z-index: 888;
 }
 </style>
+./types

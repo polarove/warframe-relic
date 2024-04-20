@@ -73,6 +73,7 @@
 
           <template #menu>
             <wt-context-menu-item
+              @select="() => menu.fn && menu.fn()"
               :type="menu.type"
               v-for="menu in generateMenu(fissure)"
             >
@@ -88,7 +89,7 @@
 
 <script setup lang="ts">
 import { useFissureSubStore } from '~/store'
-import type { ContextMenuItem } from '~/types/context-menu'
+import type { ContextMenuOptions } from '~/types/context-menu'
 import type { Fissure } from '~/types/fissure'
 defineProps<{
   title: string
@@ -142,45 +143,51 @@ const toggleSubscribe = (
   shakingBell().then(() => checkSubState())
 }
 
-const generateMenu = (fissure: Fissure): ContextMenuItem[] => {
+const generateMenu = (fissure: Fissure): ContextMenuOptions[] => {
+  const subscribeNode = () => {
+    console.log('test')
+  }
+
+  const subscribeTier = () => {}
+
+  const subscribeMission = () => {}
+
+  const subscribeTierBindNode = () => {}
+
+  const subscribeTierBindMissionType = () => {}
+
+  const subscribeAll = () => {}
+
+  const subscribeNodeBindType = () => {}
+
   return [
     { label: '订阅', type: 'title' },
-    { label: fissure.node, type: 'option' },
-    { label: fissure.tier, type: 'option' },
-    { label: fissure.missionType, type: 'option' },
+    { label: fissure.node, type: 'option', fn: subscribeNode },
+    { label: fissure.tier, type: 'option', fn: subscribeTier },
+    { label: fissure.missionType, type: 'option', fn: subscribeMission },
     { label: '组合订阅', type: 'title' },
     {
       label: `${fissure.tier} - ${fissure.node}`,
-      type: 'option'
+      type: 'option',
+      fn: subscribeTierBindNode
     },
     {
       label: `${fissure.tier} - ${fissure.missionType}`,
-      type: 'option'
+      type: 'option',
+      fn: subscribeTierBindMissionType
     },
     {
       label: `${fissure.tier} - ${fissure.node} - ${fissure.missionType}`,
-      type: 'option'
+      type: 'option',
+      fn: subscribeAll
     },
     {
       label: `${fissure.node} - ${fissure.missionType}`,
-      type: 'option'
+      type: 'option',
+      fn: subscribeNodeBindType
     }
   ]
 }
-
-const subscribeNode = () => {}
-
-const subscribeTier = () => {}
-
-const subscribeMission = () => {}
-
-const subscribeTierBindNode = () => {}
-
-const subscribeTierBindMissionType = () => {}
-
-const subscribeAll = () => {}
-
-const subscribeNodeBindType = () => {}
 </script>
 
 <style lang="scss" scoped>
@@ -239,3 +246,4 @@ const subscribeNodeBindType = () => {}
 //   }
 // }
 </style>
+~/components/context-menu/context-menu
