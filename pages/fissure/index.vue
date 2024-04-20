@@ -7,7 +7,9 @@
       class="min-h-50vh"
       v-loading="origin.loading"
       :is-empty="origin.empty"
-      @finish-origin="(expired: Fissure) => cleanOrigin(expired)"
+      @finish-origin="
+        (expired: Fissure, index: number) => cleanOrigin(expired, index)
+      "
     >
       <div class="flex-center">
         <span
@@ -27,7 +29,9 @@
       class="min-h-50vh"
       v-loading="steelPath.loading"
       :is-empty="steelPath.empty"
-      @finish-steel="(expired: Fissure) => cleanSteel(expired)"
+      @finish-steel="
+        (expired: Fissure, index: number) => cleanSteel(expired, index)
+      "
     >
       <div class="flex-center">
         <span
@@ -47,7 +51,9 @@
       class="min-h-50vh"
       v-loading="empyrean.loading"
       :is-empty="empyrean.empty"
-      @finish-empyrean="(expired: Fissure) => cleanEmpyrean(expired)"
+      @finish-empyrean="
+        (expired: Fissure, index: number) => cleanEmpyrean(expired, index)
+      "
     >
       <div class="flex-center">
         <span
@@ -200,7 +206,7 @@ const prepareFissures = (fissures: Fissure[]) => {
   return fissures
     .sort((a, b) => a.tierNum - b.tierNum)
     .map((fissure) => {
-      return { ...fissure, subscribed: isSub, panel: false }
+      return { ...fissure, subscribed: isSub, panel: false, valid: true }
     })
 }
 
@@ -245,8 +251,12 @@ const processUpdate = (
   addExpiredFissureId(id)
   const { url, data } = prepareRequest()
 
-  const hasIntersection = (source: string[], target: string[]): string[] => {
+  const checkIntersections = <T,>(source: T[], target: T[]): T[] => {
     return source.filter((item) => target.includes(item))
+  }
+
+  const filterNewFissures = <T,>(source: T[], target: T[]): T[] => {
+    return source.filter((item) => !target.includes(item))
   }
 
   const parseState = (defaultState: FissureDataState, newMessage?: string) => {
@@ -254,16 +264,15 @@ const processUpdate = (
     return defaultState
   }
 
-  const checkDuplications = (fissures: Fissure[]) => {
+  const checkOutdates = (fissures: Fissure[]) => {
     if (fissures) {
-      const intersection = hasIntersection(
+      const intersection = checkIntersections<string>(
         fissures.map((fissure) => fissure.id),
         expiredFissureIdQueue
       )
       if (ListUtil.isEmpty(intersection)) {
         clearInterval(indicator.value)
         dropExpiredFissureIds()
-        setState(DATA_CLEAN)
         return Promise.resolve(fissures)
       } else {
         const message = '[裂缝更新]：获取的数据尚未更新，继续执行轮询'
@@ -277,17 +286,26 @@ const processUpdate = (
     }
   }
 
+  const checkUpdates = (fissures: Fissure[]) => {
+    const newOrigin = filterNewFissures(fissures, origin.fissure)
+    const newSteelPath = filterNewFissures(fissures, steelPath.fissure)
+    const newEmpyrean = filterNewFissures(fissures, empyrean.fissure)
+    return newOrigin.concat(newSteelPath).concat(newEmpyrean)
+  }
+
   let times = 1
   const processData = () => {
     setState(parseState(DATA_UPDATING, `[裂缝更新]：开始第${times}次轮询`))
     times++
     $fetch(url, data)
-      .then((res) => checkDuplications(res as Fissure[]))
+      .then((res) => checkOutdates(res as Fissure[]))
+      .then((res) => checkUpdates(res))
       .then((res) => pickValid(res))
       .then((res) => prepareFissures(res))
       .then((modified) => fillSteelPath(modified!))
       .then((leftover) => fillEmpyrean(leftover))
       .then((leftover) => fillOrigin(leftover))
+      .then(() => setState(DATA_CLEAN))
       .catch((err) => console.info(err))
   }
 
@@ -301,13 +319,13 @@ const processUpdate = (
 /** ---------------------------------  */
 
 // 倒计时结束时清除过期的裂缝
-const cleanOrigin = (expired: Fissure) => {
+const cleanOrigin = (expired: Fissure, index: number) => {
   origin.fissure = origin.fissure.filter((fissure) => fissure.id !== expired.id)
   origin.state = DATA_UPDATING
   processUpdate(expired, (state: FissureDataState) => (origin.state = state))
 }
 
-const cleanSteel = (expired: Fissure) => {
+const cleanSteel = (expired: Fissure, index: number) => {
   steelPath.fissure = steelPath.fissure.filter(
     (fissure) => fissure.id !== expired.id
   )
@@ -315,7 +333,7 @@ const cleanSteel = (expired: Fissure) => {
   processUpdate(expired, (state: FissureDataState) => (steelPath.state = state))
 }
 
-const cleanEmpyrean = (expired: Fissure) => {
+const cleanEmpyrean = (expired: Fissure, index: number) => {
   empyrean.fissure = empyrean.fissure.filter(
     (fissure) => fissure.id !== expired.id
   )
@@ -336,6 +354,18 @@ const prepareData = () => {
     .catch((err) => handleError(err))
 }
 prepareData()
+
+const sortOrigin = () => {
+  origin.fissure = origin.fissure.sort((a, b) => a.tierNum - b.tierNum)
+}
+
+const sortSteelPath = () => {
+  steelPath.fissure = steelPath.fissure.sort((a, b) => a.tierNum - b.tierNum)
+}
+
+const sortEmpyrean = () => {
+  empyrean.fissure = empyrean.fissure.sort((a, b) => a.tierNum - b.tierNum)
+}
 
 const handleError = (err: string | undefined) => {
   ElMessage.error(

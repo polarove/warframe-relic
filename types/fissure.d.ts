@@ -1,11 +1,12 @@
 import { RELIC_TIER, RELIC_TIER_NUMBER } from '~/apis/enums'
 
-export interface Subscribe {
+export interface _FissureBase {
   subscribed: boolean
   panel: boolean
+  valid: boolean
 }
 
-export interface Fissure extends Subscribe {
+export interface Fissure extends _FissureBase {
   activation: string
   active: boolean
   enemy: string
