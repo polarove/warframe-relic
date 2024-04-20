@@ -7,7 +7,6 @@
       class="min-h-50vh"
       v-loading="origin.loading"
       :is-empty="origin.empty"
-      @finish="(expired: Fissure) => handleFinish(expired)"
       @finish-origin="(expired: Fissure) => cleanOrigin(expired)"
     >
       <div class="flex-center">
@@ -28,7 +27,6 @@
       class="min-h-50vh"
       v-loading="steelPath.loading"
       :is-empty="steelPath.empty"
-      @finish="(expired: Fissure) => handleFinish(expired)"
       @finish-steel="(expired: Fissure) => cleanSteel(expired)"
     >
       <div class="flex-center">
@@ -49,7 +47,6 @@
       class="min-h-50vh"
       v-loading="empyrean.loading"
       :is-empty="empyrean.empty"
-      @finish="(expired: Fissure) => handleFinish(expired)"
       @finish-empyrean="(expired: Fissure) => cleanEmpyrean(expired)"
     >
       <div class="flex-center">
@@ -82,13 +79,18 @@ const DATA_CLEAN = {
 }
 const DATA_OUTDATED = {
   icon: 'i-ep:warning',
-  tip: '需要更新state.tip',
+  tip: '需要更新',
   className: 'outdated'
 }
 const DATA_UPDATING = {
   icon: 'i-ep:loading',
   tip: '正在更新',
   className: 'updating'
+}
+const DATA_UPDATE_FAILED = {
+  icon: 'i-ep:close-bold',
+  tip: '更新失败',
+  className: 'failed'
 }
 
 useHead({
@@ -128,9 +130,9 @@ interface FissureState {
 }
 
 interface FissureDataState {
-  icon: string
-  tip: string
-  className: string
+  icon?: string
+  tip?: string
+  className?: string
 }
 
 const origin = reactive<FissureState>({
@@ -235,13 +237,21 @@ const indicator = ref<NodeJS.Timeout | undefined>()
 const { expiredFissureIdQueue, addExpiredFissureId, dropExpiredFissureIds } =
   useFissureStore()
 
-const handleFinish = (expired: Fissure) => {
+const processUpdate = (
+  expired: Fissure,
+  setState: (state: FissureDataState) => void
+) => {
   const id = expired.id
   addExpiredFissureId(id)
   const { url, data } = prepareRequest()
 
   const hasIntersection = (source: string[], target: string[]): string[] => {
     return source.filter((item) => target.includes(item))
+  }
+
+  const parseState = (defaultState: FissureDataState, newMessage?: string) => {
+    if (newMessage) defaultState.tip = newMessage
+    return defaultState
   }
 
   const checkDuplications = (fissures: Fissure[]) => {
@@ -253,22 +263,23 @@ const handleFinish = (expired: Fissure) => {
       if (ListUtil.isEmpty(intersection)) {
         clearInterval(indicator.value)
         dropExpiredFissureIds()
-        ElNotification.success({
-          title: '裂缝更新',
-          message: '所有裂缝已更新至最新状态'
-        })
+        setState(DATA_CLEAN)
         return Promise.resolve(fissures)
       } else {
-        return Promise.reject('[裂缝更新]：获取的数据尚未更新，继续执行轮询')
+        const message = '[裂缝更新]：获取的数据尚未更新，继续执行轮询'
+        setState(parseState(DATA_UPDATING, message))
+        return Promise.reject(message)
       }
     } else {
-      return Promise.reject('[裂缝更新]：获取到的裂缝数据为空，请刷新页面')
+      const message = '[裂缝更新]：获取到的裂缝数据为空，请刷新页面'
+      setState(parseState(DATA_UPDATE_FAILED, message))
+      return Promise.reject(message)
     }
   }
 
   let times = 1
   const processData = () => {
-    console.log(`[裂缝更新]：开始第${times}次轮询`)
+    setState(parseState(DATA_UPDATING, `[裂缝更新]：开始第${times}次轮询`))
     times++
     $fetch(url, data)
       .then((res) => checkDuplications(res as Fissure[]))
@@ -277,7 +288,7 @@ const handleFinish = (expired: Fissure) => {
       .then((modified) => fillSteelPath(modified!))
       .then((leftover) => fillEmpyrean(leftover))
       .then((leftover) => fillOrigin(leftover))
-      .catch((err) => handleError(err))
+      .catch((err) => console.info(err))
   }
 
   if (indicator.value) {
@@ -292,21 +303,24 @@ const handleFinish = (expired: Fissure) => {
 // 倒计时结束时清除过期的裂缝
 const cleanOrigin = (expired: Fissure) => {
   origin.fissure = origin.fissure.filter((fissure) => fissure.id !== expired.id)
-  origin.state = DATA_OUTDATED
+  origin.state = DATA_UPDATING
+  processUpdate(expired, (state: FissureDataState) => (origin.state = state))
 }
 
 const cleanSteel = (expired: Fissure) => {
   steelPath.fissure = steelPath.fissure.filter(
     (fissure) => fissure.id !== expired.id
   )
-  steelPath.state = DATA_OUTDATED
+  steelPath.state = DATA_UPDATING
+  processUpdate(expired, (state: FissureDataState) => (steelPath.state = state))
 }
 
 const cleanEmpyrean = (expired: Fissure) => {
   empyrean.fissure = empyrean.fissure.filter(
     (fissure) => fissure.id !== expired.id
   )
-  empyrean.state = DATA_OUTDATED
+  empyrean.state = DATA_UPDATING
+  processUpdate(expired, (state: FissureDataState) => (empyrean.state = state))
 }
 /** ---------------------------------  */
 const prepareData = () => {
@@ -354,5 +368,8 @@ useHead({
       transform: rotate(360deg);
     }
   }
+}
+.state-icon.failed {
+  color: var(--el-color-danger);
 }
 </style>
