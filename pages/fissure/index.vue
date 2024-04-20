@@ -3,29 +3,32 @@
     <h1 text="center">裂缝订阅功能仍在制作中</h1>
     <wt-fissure
       title="始源星系"
-      :fissures="origin"
+      :fissures="origin.fissure"
       class="min-h-50vh"
-      v-loading="originState.loading"
-      :is-empty="originState.empty"
+      v-loading="origin.loading"
+      :is-empty="origin.empty"
       @finish="(expired: Fissure) => handleFinish(expired)"
+      @finish-origin="(expired: Fissure) => cleanOrigin(expired)"
     />
     <el-divider />
     <wt-fissure
       title="钢铁之路"
-      :fissures="steelPath"
+      :fissures="steelPath.fissure"
       class="min-h-50vh"
-      v-loading="steelPathState.loading"
-      :is-empty="steelPathState.empty"
+      v-loading="steelPath.loading"
+      :is-empty="steelPath.empty"
       @finish="(expired: Fissure) => handleFinish(expired)"
+      @finish-steel="(expired: Fissure) => cleanSteel(expired)"
     />
     <el-divider />
     <wt-fissure
       title="九重天"
-      :fissures="empyrean"
+      :fissures="empyrean.fissure"
       class="min-h-50vh"
-      v-loading="empyreanState.loading"
-      :is-empty="empyreanState.empty"
+      v-loading="empyrean.loading"
+      :is-empty="empyrean.empty"
       @finish="(expired: Fissure) => handleFinish(expired)"
+      @finish-empyrean="(expired: Fissure) => cleanEmpyrean(expired)"
     />
   </wt-context-menu-container>
   <wt-spirit />
@@ -38,29 +41,35 @@ import type { Fissure } from '~/types/fissure'
 import { LANGUAGE, PLATFORM } from '~/enums'
 import { ListUtil } from '@polaris_liu/toolcat'
 import { useFissureStore } from '~/store'
+import { timestamp } from '@vueuse/core'
 
 useHead({
   title: '裂缝 | warframe-team',
   link: [{ rel: 'shortcut icon', href: './fissure-logo-white.svg' }]
 })
 
-const origin = reactive<Fissure[]>([])
-const steelPath = reactive<Fissure[]>([])
-const empyrean = reactive<Fissure[]>([])
+interface FissureState {
+  loading: boolean
+  empty: boolean
+  fissure: Fissure[]
+}
 
-const originState = reactive({
+const origin = reactive<FissureState>({
   loading: true,
-  empty: false
+  empty: false,
+  fissure: []
 })
 
-const steelPathState = reactive({
+const steelPath = reactive<FissureState>({
   loading: true,
-  empty: false
+  empty: false,
+  fissure: []
 })
 
-const empyreanState = reactive({
+const empyrean = reactive<FissureState>({
   loading: true,
-  empty: false
+  empty: false,
+  fissure: []
 })
 
 const prepareFissures = (fissures: Fissure[]) => {
@@ -84,30 +93,30 @@ const pickValid = (fissures: Fissure[]) => {
 }
 
 const fillSteelPath = (fissures: Fissure[]) => {
-  if (ListUtil.isEmpty(fissures)) steelPathState.empty = true
+  if (ListUtil.isEmpty(fissures)) steelPath.empty = true
   fissures
     .filter((fissure) => fissure.isHard)
-    .forEach((hard) => steelPath.push(hard))
-  steelPathState.loading = false
+    .forEach((hard) => steelPath.fissure.push(hard))
+  steelPath.loading = false
   return Promise.resolve(fissures)
 }
 
 const fillEmpyrean = (fissures: Fissure[]) => {
-  if (ListUtil.isEmpty(fissures)) empyreanState.empty = true
+  if (ListUtil.isEmpty(fissures)) empyrean.empty = true
   fissures
     .filter((fissure) => fissure.isStorm)
-    .forEach((hard) => empyrean.push(hard))
-  empyreanState.loading = false
+    .forEach((hard) => empyrean.fissure.push(hard))
+  empyrean.loading = false
   return Promise.resolve(fissures)
 }
 
 const fillOrigin = (fissures: Fissure[]) => {
-  if (ListUtil.isEmpty(fissures)) originState.empty = true
+  if (ListUtil.isEmpty(fissures)) origin.empty = true
   fissures
     .filter((fissure) => !fissure.isStorm)
     .filter((fissure) => !fissure.isHard)
-    .forEach((normal) => origin.push(normal))
-  originState.loading = false
+    .forEach((normal) => origin.fissure.push(normal))
+  origin.loading = false
 }
 
 const hasIntersection = (source: string[], target: string[]): string[] => {
@@ -119,52 +128,16 @@ const { expiredFissureIdQueue, addExpiredFissureId, dropExpiredFissureIds } =
   useFissureStore()
 
 const handleError = (err: string | undefined) => {
-  err = err ? err : '[数据错误]：处理裂缝数据时发生意外错误，请刷新页面'
-  ElMessage.error(err)
+  ElMessage.error(
+    err ? err : '[数据错误]：处理裂缝数据时发生意外错误，请刷新页面'
+  )
 }
 
-const handleFinish = (expired: Fissure) => {
-  const id = expired.id
-  addExpiredFissureId(id)
-  const handleReload = () => {
-    prepareData()
-      .then((res) => {
-        if (res) {
-          const intersection = hasIntersection(
-            res.map((fissure) => fissure.id),
-            expiredFissureIdQueue
-          )
-          if (ListUtil.isEmpty(intersection)) {
-            clearInterval(indicator.value)
-            dropExpiredFissureIds()
-            console.log('[裂缝更新]：更新完毕')
-          } else {
-            console.log('[裂缝更新]：获取的数据尚未更新，继续执行')
-          }
-          return Promise.resolve(res)
-        } else {
-          return Promise.reject('[裂缝更新]：获取到的裂缝数据为空，请刷新页面')
-        }
-      })
-      .then((modified) => fillSteelPath(modified!))
-      .then((leftover) => fillEmpyrean(leftover))
-      .then((leftover) => fillOrigin(leftover))
-      .catch((err) => handleError(err))
-  }
-
-  if (indicator.value) {
-    return Promise.reject('[裂缝更新]：仍有已过期的裂缝等待更新，跳过本次刷新')
-  } else {
-    indicator.value = setInterval(() => handleReload(), 10000)
-    return Promise.resolve(indicator.value)
-  }
-}
-
-const prepareData = async (
+const prepareRequest = (
   platform: PLATFORM = PLATFORM.PC,
   language: LANGUAGE = LANGUAGE.ZH
 ) => {
-  const handleRequest = (res: any) => {
+  const handleServerSideRequest = (res: any) => {
     if (res.error.value) {
       console.error(res.error.value?.cause)
       return Promise.reject(`[请求失败]: ${res.error.value?.data.error}`)
@@ -175,20 +148,85 @@ const prepareData = async (
   const data = {
     query: { language }
   }
-
-  return useFetch<Fissure[]>(url, data)
-    .then((res) => handleRequest(res))
-    .then((res) => pickValid(res))
-    .then((res) => prepareFissures(res))
-    .then((res) => res)
-    .catch((err) => handleError(err))
+  return { handleServerSideRequest, url, data }
 }
 
+const cleanOrigin = (expired: Fissure) => {
+  origin.fissure = origin.fissure.filter((fissure) => fissure.id !== expired.id)
+}
+
+const cleanSteel = (expired: Fissure) => {
+  steelPath.fissure = steelPath.fissure.filter(
+    (fissure) => fissure.id !== expired.id
+  )
+}
+
+const cleanEmpyrean = (expired: Fissure) => {
+  empyrean.fissure = empyrean.fissure.filter(
+    (fissure) => fissure.id !== expired.id
+  )
+}
+
+const checkDuplications = (fissures: Fissure[]) => {
+  console.log(fissures)
+
+  if (fissures) {
+    const intersection = hasIntersection(
+      fissures.map((fissure) => fissure.id),
+      expiredFissureIdQueue
+    )
+    if (ListUtil.isEmpty(intersection)) {
+      clearInterval(indicator.value)
+      dropExpiredFissureIds()
+      console.log('[裂缝更新]：更新完毕')
+      return Promise.resolve(fissures)
+    } else {
+      return Promise.reject('[裂缝更新]：获取的数据尚未更新，继续执行轮询')
+    }
+  } else {
+    return Promise.reject('[裂缝更新]：获取到的裂缝数据为空，请刷新页面')
+  }
+}
+
+const handleFinish = (expired: Fissure) => {
+  const id = expired.id
+  addExpiredFissureId(id)
+  const { url, data } = prepareRequest()
+
+  let times = 1
+  const processData = () => {
+    console.log(`[裂缝更新]：开始第${times}次轮询`)
+    times++
+    $fetch(url, data)
+      .then((res) => checkDuplications(res as Fissure[]))
+      .then((res) => pickValid(res))
+      .then((res) => prepareFissures(res))
+      .then((modified) => fillSteelPath(modified!))
+      .then((leftover) => fillEmpyrean(leftover))
+      .then((leftover) => fillOrigin(leftover))
+      .catch((err) => handleError(err))
+  }
+
+  if (indicator.value) {
+    return console.log('[裂缝更新]：仍有已过期的裂缝等待更新，不再新增interval')
+  } else {
+    indicator.value = setInterval(() => processData(), 10000)
+    return console.log(`[裂缝更新]：开始轮询，interval：${indicator.value}`)
+  }
+}
+
+const prepareData = () => {
+  const { handleServerSideRequest, url, data } = prepareRequest()
+  useFetch<Fissure[]>(url, data)
+    .then((res) => handleServerSideRequest(res))
+    .then((res) => pickValid(res))
+    .then((res) => prepareFissures(res))
+    .then((modified) => fillSteelPath(modified!))
+    .then((leftover) => fillEmpyrean(leftover))
+    .then((leftover) => fillOrigin(leftover))
+    .catch((err) => handleError(err))
+}
 prepareData()
-  .then((modified) => fillSteelPath(modified!))
-  .then((leftover) => fillEmpyrean(leftover))
-  .then((leftover) => fillOrigin(leftover))
-  .catch((err) => handleError(err))
 
 useHead({
   title: '裂缝 | warframe-team'

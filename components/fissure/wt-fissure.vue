@@ -110,9 +110,18 @@ const getNodeName = (node: string) => {
 
 const getNodeNameEn = (node: string) => node.replace(/\([^)]*\)/g, '')
 
-const emits = defineEmits(['finish', 'select-menu'])
+const emits = defineEmits([
+  'finish',
+  'select-menu',
+  'finish-origin',
+  'finish-empyrean',
+  'finish-steel'
+])
 const handleFinish = (fissure: Fissure) => {
   emits('finish', fissure)
+  if (fissure.isHard) return emits('finish-steel', fissure)
+  else if (fissure.isStorm) return emits('finish-empyrean', fissure)
+  else return emits('finish-origin', fissure)
 }
 
 // todo 还没想好这个面板要干什么
