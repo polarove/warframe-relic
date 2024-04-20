@@ -168,8 +168,6 @@ const cleanEmpyrean = (expired: Fissure) => {
 }
 
 const checkDuplications = (fissures: Fissure[]) => {
-  console.log(fissures)
-
   if (fissures) {
     const intersection = hasIntersection(
       fissures.map((fissure) => fissure.id),
