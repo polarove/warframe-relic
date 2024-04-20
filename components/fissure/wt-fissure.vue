@@ -133,27 +133,46 @@ const toggleSubscribe = (
 }
 
 const generateMenu = (fissure: Fissure): ContextMenu[] => {
+  const subscribeNode = () => {
+    console.log(fissure.node, fissure.nodeKey)
+  }
+
+  const subscribeTier = () => {}
+
+  const subscribeMission = () => {}
+
+  const subscribeTierBindNode = () => {}
+
+  const subscribeTierBindMissionType = () => {}
+
+  const subscribeAll = () => {}
+
+  const subscribeNodeBindType = () => {}
   return [
-    { label: '订阅', type: 'title' },
-    { label: fissure.node, type: 'option' },
-    { label: fissure.tier, type: 'option' },
-    { label: fissure.missionType, type: 'option' },
-    { label: '组合订阅', type: 'title' },
+    { label: '订阅', type: 'title', icon: 'playlist/fissure' },
+    { label: fissure.node, type: 'option', fn: subscribeNode },
+    { label: fissure.tier, type: 'option', fn: subscribeTier },
+    { label: fissure.missionType, type: 'option', fn: subscribeMission },
+    { label: '组合订阅', type: 'title', icon: 'playlist/fissure' },
     {
       label: `${fissure.tier} - ${fissure.node}`,
-      type: 'option'
+      type: 'option',
+      fn: subscribeTierBindNode
     },
     {
       label: `${fissure.tier} - ${fissure.missionType}`,
-      type: 'option'
+      type: 'option',
+      fn: subscribeTierBindMissionType
     },
     {
       label: `${fissure.tier} - ${fissure.node} - ${fissure.missionType}`,
-      type: 'option'
+      type: 'option',
+      fn: subscribeAll
     },
     {
       label: `${fissure.node} - ${fissure.missionType}`,
-      type: 'option'
+      type: 'option',
+      fn: subscribeNodeBindType
     }
   ]
 }

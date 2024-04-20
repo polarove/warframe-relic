@@ -1,6 +1,6 @@
 export interface ContextMenu {
   label: string
   fn?: () => void
-  icon?: string | Component
+  icon?: string
   type?: 'title' | 'option'
 }

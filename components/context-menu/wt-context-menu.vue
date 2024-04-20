@@ -13,12 +13,13 @@
       >
         <div class="context-menu__list">
           <div
-            @click="handleClick(option.fn)"
             class="context-menu__item"
             :class="option.type"
             v-for="option in menu"
+            @click="handleClick(option.fn)"
           >
-            {{ option.label }}
+            <span>{{ option.label }}</span>
+            <nuxt-icon :name="option.icon" v-if="option.icon"></nuxt-icon>
           </div>
         </div>
       </div>
@@ -29,7 +30,7 @@
 <script lang="ts" setup>
 import type { ContextMenu } from '~/types/context-menu'
 import { useContextMenu } from './useContextMenu'
-import { useZIndex } from 'element-plus'
+
 withDefaults(
   defineProps<{
     menu?: ContextMenu[]
@@ -78,7 +79,7 @@ const handleClick = (callback: (() => void) | undefined) => {
     }
     .context-menu__item.option {
       cursor: pointer;
-      padding: 4px 10px 4px 10px;
+      padding: 5px 25px;
       &:hover {
         background-color: var(--el-color-primary);
         color: var(--el-color-white);
@@ -86,13 +87,13 @@ const handleClick = (callback: (() => void) | undefined) => {
     }
     .context-menu__item.title {
       --context-menu-item-border: 1px solid var(--el-border-color-light);
-      padding: 4px 10px 4px 10px;
+      padding: 5px 12px;
       text-align: right;
       border-bottom: var(--context-menu-item-border);
     }
     .context-menu__item.title:not(:first-child) {
       --context-menu-item-border: 1px solid var(--el-border-color-light);
-      padding: 4px 10px 4px 10px;
+
       text-align: right;
       border-top: var(--context-menu-item-border);
       border-bottom: var(--context-menu-item-border);
