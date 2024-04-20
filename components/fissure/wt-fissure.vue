@@ -1,6 +1,9 @@
 <template>
   <section>
-    <h1>{{ title }}</h1>
+    <div class="flex-between items-center">
+      <h1>{{ title }}</h1>
+      <slot></slot>
+    </div>
     <el-empty v-if="isEmpty" description="空">
       <template #image>
         <nuxt-icon name="state/empty" />
