@@ -20,7 +20,11 @@
             <div class="flex-between">
               <span>{{ fissure.node }} - {{ fissure.missionType }}</span>
               <div
-                class="i-ep:bell w-1.3em h-1.3em operation bell"
+                class="i-ep:bell bell"
+                w="1.3em"
+                h="1.3em"
+                cursor="pointer"
+                color="~ hover:$el-color-primary"
                 :style="{
                   color: fissure.subscribed
                     ? 'var(--el-color-primary)'
@@ -47,14 +51,31 @@
             <el-card v-if="fissure.panel" class="sub-panel__card">
               <template #header>
                 <div class="flex-between items-center">
-                  <span>订阅</span>
+                  <span> 订阅{{ getNodeName(fissure.node) }} </span>
                   <div
-                    class="i-ep:close w-1.3em h-1.3em operation"
+                    class="i-ep:close"
+                    w="1.3em"
+                    h="1.3em"
+                    cursor="pointer"
+                    color="~ hover:$el-color-primary"
                     @click="() => (fissure.panel = !fissure.panel)"
                   ></div>
                 </div>
               </template>
-              <span>{{ fissure.tier }}</span>
+              <div class="sub-panel__operations">
+                <div class="operation">
+                  {{ getNodeNameEn(fissure.node) }}
+                </div>
+                <div class="operation">
+                  {{ fissure.tier }}
+                </div>
+                <div class="operation">
+                  {{ fissure.missionType }}
+                </div>
+                <div class="operation">
+                  {{ fissure.enemy }}
+                </div>
+              </div>
             </el-card>
           </el-collapse-transition>
         </el-card>
@@ -73,12 +94,25 @@ defineProps<{
 }>()
 
 const getTimestamp = (dateStr: string) => new Date(dateStr).getTime()
-const emits = defineEmits(['finish', 'settings', 'subscribe'])
+
+const getNodeName = (node: string) => {
+  const name = node.match(/(?<=\().+?(?=\))/g)
+  return name ? ` - ${name}` : ''
+}
+
+const getNodeNameEn = (node: string) => node.replace(/\([^)]*\)/g, '')
+
+const emits = defineEmits([
+  'origin-finish',
+  'steel-finish',
+  'empyrean-finish',
+  'settings',
+  'subscribe'
+])
 const handleFinish = (fissure: Fissure) => {
-  console.log(
-    fissure.node.concat(' - ').concat(fissure.missionType).concat('已经过期')
-  )
-  emits('finish', fissure)
+  if (fissure.isHard) emits('steel-finish', fissure)
+  else if (fissure.isStorm) emits('empyrean-finish', fissure)
+  else emits('origin-finish', fissure)
 }
 
 const toggleSubscribe = (
@@ -89,7 +123,6 @@ const toggleSubscribe = (
 ) => {
   emits('subscribe', fissure, index, title)
   const { subs } = useFissureSubStore()
-  const target = e.target as HTMLElement
 
   const shakingBell = async () => {
     fissure.panel = true
@@ -119,42 +152,39 @@ const toggleSubscribe = (
   top: 0;
   left: 0;
   width: 100%;
-}
-.operation {
-  cursor: pointer;
-  &:hover {
-    color: var(--el-color-primary);
-  }
-}
-.operation.setting {
-  &:hover {
-    animation: rotate 2s linear infinite;
-  }
-  @keyframes rotate {
-    from {
-      transform: rotate(0);
+  .sub-panel__operations {
+    display: flex;
+    width: 100%;
+    .operation {
+      flex: 1;
+      padding: 0.2em;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
     }
-
-    to {
-      transform: rotate(360deg);
+    .operation:first-child {
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+    }
+    .operation:last-child {
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
     }
   }
-}
-.operation.bell.subscribed {
-  color: var(--el-color-primary);
 }
 
-.belling {
-  animation: swing 167ms ease-in-out infinite;
-  transform-origin: center top;
+// .belling {
+//   animation: swing 167ms ease-in-out infinite;
+//   transform-origin: center top;
 
-  @keyframes swing {
-    from {
-      transform: rotate(-10deg);
-    }
-    to {
-      transform: rotate(10deg);
-    }
-  }
-}
+//   @keyframes swing {
+//     from {
+//       transform: rotate(-10deg);
+//     }
+//     to {
+//       transform: rotate(10deg);
+//     }
+//   }
+// }
 </style>
