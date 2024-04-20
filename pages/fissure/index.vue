@@ -1,5 +1,6 @@
 <template>
   <wt-context-menu-container>
+    <h1 text="center">裂缝订阅功能仍在制作中</h1>
     <wt-fissure
       title="始源星系"
       :fissures="origin"
