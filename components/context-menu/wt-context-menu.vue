@@ -11,17 +11,7 @@
           top: y + 'px'
         }"
       >
-        <div class="context-menu__list">
-          <div
-            class="context-menu__item"
-            :class="option.type"
-            v-for="option in menu"
-            @click="handleClick(option.fn)"
-          >
-            <span>{{ option.label }}</span>
-            <nuxt-icon :name="option.icon" v-if="option.icon"></nuxt-icon>
-          </div>
-        </div>
+        <slot name="menu"></slot>
       </div>
     </teleport>
   </section>
@@ -73,31 +63,5 @@ const handleClick = (callback: (() => void) | undefined) => {
   overflow: hidden;
   padding: 6px 0;
   z-index: 888;
-  .context-menu__list {
-    .context-menu__item {
-      font-size: 0.88em;
-    }
-    .context-menu__item.option {
-      cursor: pointer;
-      padding: 5px 25px;
-      &:hover {
-        background-color: var(--el-color-primary);
-        color: var(--el-color-white);
-      }
-    }
-    .context-menu__item.title {
-      --context-menu-item-border: 1px solid var(--el-border-color-light);
-      padding: 5px 12px;
-      text-align: right;
-      border-bottom: var(--context-menu-item-border);
-    }
-    .context-menu__item.title:not(:first-child) {
-      --context-menu-item-border: 1px solid var(--el-border-color-light);
-
-      text-align: right;
-      border-top: var(--context-menu-item-border);
-      border-bottom: var(--context-menu-item-border);
-    }
-  }
 }
 </style>

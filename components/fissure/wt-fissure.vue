@@ -14,7 +14,7 @@
         :md="8"
         :xl="6"
       >
-        <lazy-wt-context-menu :menu="generateMenu(fissure)">
+        <lazy-wt-context-menu>
           <el-card class="fissure-card">
             <template #header>
               <div class="flex-between">
@@ -70,6 +70,16 @@
               </el-card>
             </el-collapse-transition>
           </el-card>
+
+          <template #menu>
+            <wt-context-menu-item
+              :type="menu.type"
+              v-for="menu in generateMenu(fissure)"
+            >
+              {{ menu.label }}
+              <nuxt-icon v-if="menu.type === 'title'" name="playlist/fissure" />
+            </wt-context-menu-item>
+          </template>
         </lazy-wt-context-menu>
       </el-col>
     </el-row>
@@ -78,7 +88,7 @@
 
 <script setup lang="ts">
 import { useFissureSubStore } from '~/store'
-import type { ContextMenu } from '~/types/context-menu'
+import type { ContextMenuItem } from '~/types/context-menu'
 import type { Fissure } from '~/types/fissure'
 defineProps<{
   title: string
@@ -132,50 +142,45 @@ const toggleSubscribe = (
   shakingBell().then(() => checkSubState())
 }
 
-const generateMenu = (fissure: Fissure): ContextMenu[] => {
-  const subscribeNode = () => {
-    console.log(fissure.node, fissure.nodeKey)
-  }
-
-  const subscribeTier = () => {}
-
-  const subscribeMission = () => {}
-
-  const subscribeTierBindNode = () => {}
-
-  const subscribeTierBindMissionType = () => {}
-
-  const subscribeAll = () => {}
-
-  const subscribeNodeBindType = () => {}
+const generateMenu = (fissure: Fissure): ContextMenuItem[] => {
   return [
-    { label: '订阅', type: 'title', icon: 'playlist/fissure' },
-    { label: fissure.node, type: 'option', fn: subscribeNode },
-    { label: fissure.tier, type: 'option', fn: subscribeTier },
-    { label: fissure.missionType, type: 'option', fn: subscribeMission },
-    { label: '组合订阅', type: 'title', icon: 'playlist/fissure' },
+    { label: '订阅', type: 'title' },
+    { label: fissure.node, type: 'option' },
+    { label: fissure.tier, type: 'option' },
+    { label: fissure.missionType, type: 'option' },
+    { label: '组合订阅', type: 'title' },
     {
       label: `${fissure.tier} - ${fissure.node}`,
-      type: 'option',
-      fn: subscribeTierBindNode
+      type: 'option'
     },
     {
       label: `${fissure.tier} - ${fissure.missionType}`,
-      type: 'option',
-      fn: subscribeTierBindMissionType
+      type: 'option'
     },
     {
       label: `${fissure.tier} - ${fissure.node} - ${fissure.missionType}`,
-      type: 'option',
-      fn: subscribeAll
+      type: 'option'
     },
     {
       label: `${fissure.node} - ${fissure.missionType}`,
-      type: 'option',
-      fn: subscribeNodeBindType
+      type: 'option'
     }
   ]
 }
+
+const subscribeNode = () => {}
+
+const subscribeTier = () => {}
+
+const subscribeMission = () => {}
+
+const subscribeTierBindNode = () => {}
+
+const subscribeTierBindMissionType = () => {}
+
+const subscribeAll = () => {}
+
+const subscribeNodeBindType = () => {}
 </script>
 
 <style lang="scss" scoped>
