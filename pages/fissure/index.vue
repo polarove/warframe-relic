@@ -389,7 +389,7 @@ useHead({
 }
 .state-icon.updating {
   color: var(--el-color-info);
-  animation: update 2s ease-in-out infinite;
+  animation: update 2s linear infinite;
   @keyframes update {
     from {
       transform: rotate(0);
