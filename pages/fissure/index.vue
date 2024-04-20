@@ -118,6 +118,11 @@ const indicator = ref<NodeJS.Timeout | undefined>()
 const { expiredFissureIdQueue, addExpiredFissureId, dropExpiredFissureIds } =
   useFissureStore()
 
+const handleError = (err: string | undefined) => {
+  err = err ? err : '[数据错误]：处理裂缝数据时发生意外错误，请刷新页面'
+  ElMessage.error(err)
+}
+
 const handleFinish = (expired: Fissure) => {
   const id = expired.id
   addExpiredFissureId(id)
@@ -144,7 +149,7 @@ const handleFinish = (expired: Fissure) => {
       .then((modified) => fillSteelPath(modified!))
       .then((leftover) => fillEmpyrean(leftover))
       .then((leftover) => fillOrigin(leftover))
-      .catch((err) => ElMessage.error(err))
+      .catch((err) => handleError(err))
   }
 
   if (indicator.value) {
@@ -153,10 +158,6 @@ const handleFinish = (expired: Fissure) => {
     indicator.value = setInterval(() => handleReload(), 10000)
     return Promise.resolve(indicator.value)
   }
-}
-
-const handleError = (_: unknown) => {
-  ElMessage.error('[数据错误]：处理裂缝数据时发生意外错误')
 }
 
 const prepareData = async (
