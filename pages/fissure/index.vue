@@ -144,7 +144,7 @@ const handleFinish = (expired: Fissure) => {
       .then((modified) => fillSteelPath(modified!))
       .then((leftover) => fillEmpyrean(leftover))
       .then((leftover) => fillOrigin(leftover))
-      .catch((err) => ElMessage.warning(err))
+      .catch((err) => ElMessage.error(err))
   }
 
   if (indicator.value) {
