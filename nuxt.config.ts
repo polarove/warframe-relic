@@ -15,6 +15,7 @@ export default defineNuxtConfig({
     '@unocss/nuxt',
     '@vueuse/nuxt',
     'nuxt-icons',
+    '@nuxtjs/device',
     [
       '@pinia/nuxt',
       {

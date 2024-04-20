@@ -1,5 +1,5 @@
 <template>
-  <div transition="all">
+  <wt-context-menu-container>
     <wt-fissure
       title="始源星系"
       :fissures="origin"
@@ -15,10 +15,7 @@
       class="min-h-50vh"
       v-loading="steelPathState.loading"
       :is-empty="steelPathState.empty"
-      @steel-finish="
-        (outdated: Fissure) =>
-          steelPath.filter((fissure) => fissure.id !== outdated.id)
-      "
+      @steel-finish="(expired: Fissure) => reloadFissure(expired, steelPath)"
     />
     <el-divider />
     <wt-fissure
@@ -27,15 +24,10 @@
       class="min-h-50vh"
       v-loading="empyreanState.loading"
       :is-empty="empyreanState.empty"
-      @empyrean-finish="
-        (outdated: Fissure) =>
-          empyrean.filter((fissure) => fissure.id !== outdated.id)
-      "
+      @empyrean-finish="(expired: Fissure) => reloadFissure(expired, empyrean)"
     />
-  </div>
-  <client-only>
-    <el-dialog></el-dialog>
-  </client-only>
+  </wt-context-menu-container>
+  <wt-spirit />
 </template>
 
 <script setup lang="ts">
@@ -115,36 +107,20 @@ const fillOrigin = (fissures: Fissure[]) => {
 }
 
 const reloadFissure = (expired: Fissure, list: Fissure[]) => {
-  // fetchData().then(() => list.filter((fissure) => fissure.id !== expired.id))
+  const id = expired.id
+  list.filter((fissure) => fissure.id !== id)
 }
 
 const handleError = (_: unknown) => {
   ElMessage.error('[数据错误]：处理裂缝数据时发生意外错误')
 }
 
-// const fetchData = async (
-//   platform: PLATFORM = PLATFORM.PC,
-//   language: LANGUAGE = LANGUAGE.ZH
-// ) => {
-//   const handleRequest = (res: any) => {
-//     if (res.error.value) {
-//       console.error(res.error.value?.cause)
-//       return Promise.reject(`[请求失败]: ${res.error.value?.data.error}`)
-//     } else return Promise.resolve(unref(res.data))
-//   }
-
-//   const url = API.concat('/').concat(platform).concat('/').concat('fissures')
-//   const data = {
-//     query: { language }
-//   }
-
-//   return useFetch<Fissure[]>(url, data)
-//     .then((res) => handleRequest(res))
-//     .then((res) => pickValid(res))
-//     .then((res) => addProperty(res))
-//     .then((res) => res)
-//     .catch((err) => handleError(err))
-// }
+const handleRequest = (res: any) => {
+  if (res.error.value) {
+    console.error(res.error.value?.cause)
+    return Promise.reject(`[请求失败]: ${res.error.value?.data.error}`)
+  } else return Promise.resolve(unref(res.data))
+}
 
 const prepareData = async (
   platform: PLATFORM = PLATFORM.PC,
@@ -165,18 +141,16 @@ const prepareData = async (
   return useFetch<Fissure[]>(url, data)
     .then((res) => handleRequest(res))
     .then((res) => pickValid(res))
-    .then((res) => res)
     .then((res) => addProperty(res))
-}
-
-const initData = () => {
-  prepareData()
-    .then((modified) => fillSteelPath(modified!))
-    .then((leftover) => fillEmpyrean(leftover))
-    .then((leftover) => fillOrigin(leftover))
+    .then((res) => res)
     .catch((err) => handleError(err))
 }
-initData()
+
+prepareData()
+  .then((modified) => fillSteelPath(modified!))
+  .then((leftover) => fillEmpyrean(leftover))
+  .then((leftover) => fillOrigin(leftover))
+  .catch((err) => handleError(err))
 
 useHead({
   title: '裂缝 | warframe-team'
