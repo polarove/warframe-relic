@@ -7,9 +7,7 @@
       class="min-h-50vh"
       v-loading="origin.loading"
       :is-empty="origin.empty"
-      @finish-origin="
-        (expired: Fissure, index: number) => cleanOrigin(expired, index)
-      "
+      @finish-origin="(expired: Fissure) => cleanOrigin(expired)"
     >
       <div class="flex-center">
         <span
@@ -29,9 +27,7 @@
       class="min-h-50vh"
       v-loading="steelPath.loading"
       :is-empty="steelPath.empty"
-      @finish-steel="
-        (expired: Fissure, index: number) => cleanSteel(expired, index)
-      "
+      @finish-steel="(expired: Fissure) => cleanSteel(expired)"
     >
       <div class="flex-center">
         <span
@@ -51,9 +47,7 @@
       class="min-h-50vh"
       v-loading="empyrean.loading"
       :is-empty="empyrean.empty"
-      @finish-empyrean="
-        (expired: Fissure, index: number) => cleanEmpyrean(expired, index)
-      "
+      @finish-empyrean="(expired: Fissure) => cleanEmpyrean(expired)"
     >
       <div class="flex-center">
         <span
@@ -319,13 +313,13 @@ const processUpdate = (
 /** ---------------------------------  */
 
 // 倒计时结束时清除过期的裂缝
-const cleanOrigin = (expired: Fissure, index: number) => {
+const cleanOrigin = (expired: Fissure) => {
   origin.fissure = origin.fissure.filter((fissure) => fissure.id !== expired.id)
   origin.state = DATA_UPDATING
   processUpdate(expired, (state: FissureDataState) => (origin.state = state))
 }
 
-const cleanSteel = (expired: Fissure, index: number) => {
+const cleanSteel = (expired: Fissure) => {
   steelPath.fissure = steelPath.fissure.filter(
     (fissure) => fissure.id !== expired.id
   )
@@ -333,7 +327,7 @@ const cleanSteel = (expired: Fissure, index: number) => {
   processUpdate(expired, (state: FissureDataState) => (steelPath.state = state))
 }
 
-const cleanEmpyrean = (expired: Fissure, index: number) => {
+const cleanEmpyrean = (expired: Fissure) => {
   empyrean.fissure = empyrean.fissure.filter(
     (fissure) => fissure.id !== expired.id
   )
