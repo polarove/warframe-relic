@@ -31,8 +31,7 @@
                       : undefined
                   }"
                   @click="
-                    (el: MouseEvent) =>
-                      toggleSubscribe(el, fissure, index, title)
+                    (e: MouseEvent) => toggleSubscribe(e, fissure, index, title)
                   "
                 />
               </div>
@@ -49,7 +48,11 @@
               <div class="sub-panel__overlay" v-if="fissure.panel"></div>
             </transition>
             <el-collapse-transition>
-              <el-card v-if="fissure.panel" class="sub-panel__card">
+              <el-card
+                v-if="fissure.panel"
+                class="sub-panel__card"
+                ref="subPanelCardRefs"
+              >
                 <template #header>
                   <div class="flex-between items-center">
                     <span> 订阅{{ getNodeName(fissure.node) }} </span>
@@ -82,6 +85,8 @@ defineProps<{
   fissures: Fissure[]
   isEmpty: boolean
 }>()
+
+const subPanelCardRefs = reactive<HTMLElement[] | []>([])
 
 const getTimestamp = (dateStr: string) => new Date(dateStr).getTime()
 
@@ -165,12 +170,14 @@ const generateMenu = (fissure: Fissure): ContextMenu[] => {
     left: 0;
     width: 100%;
     height: 100%;
+    z-index: 4;
   }
   .sub-panel__card {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
+    z-index: 5;
     .sub-panel__operations {
       display: flex;
       width: 100%;

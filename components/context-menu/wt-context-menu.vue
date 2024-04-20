@@ -6,7 +6,6 @@
         v-if="visible"
         ref="contextMenuSelf"
         class="context-menu"
-        :menu-id="menuId"
         :style="{
           left: x + 'px',
           top: y + 'px'
@@ -31,7 +30,6 @@
 import type { ContextMenu } from '~/types/context-menu'
 import { useContextMenu } from './useContextMenu'
 import { useZIndex } from 'element-plus'
-const menuId = useZIndex().nextZIndex()
 withDefaults(
   defineProps<{
     menu?: ContextMenu[]
@@ -52,8 +50,7 @@ const contextMenuSelf = ref<HTMLElement | null>(null)
 
 const { x, y, visible, closeMenu } = useContextMenu(
   contextMenuRef,
-  contextMenuSelf,
-  menuId
+  contextMenuSelf
 )
 
 const handleClick = (callback: (() => void) | undefined) => {

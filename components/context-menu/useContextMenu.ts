@@ -1,10 +1,8 @@
 import type { Nullable } from '@polaris_liu/toolcat'
-import { useZIndex } from 'element-plus'
 
 export const useContextMenu = (
   target: Ref<Nullable<HTMLElement>>,
-  self: Ref<Nullable<HTMLElement>>,
-  menuId: number
+  self: Ref<Nullable<HTMLElement>>
 ) => {
   const x = ref(0)
   const y = ref(0)
@@ -25,16 +23,59 @@ export const useContextMenu = (
 
   onClickOutside(self, () => closeMenu())
 
-  onMounted(() => {
-    if (!target.value) return
+  const { isMobile, isDesktop } = useDevice()
 
-    target.value.addEventListener('contextmenu', handleContextMenu)
-  })
+  const contextMenuWarn = (message: string) => {
+    console.warn(`[context-menu]：${message}`)
+  }
 
-  onUnmounted(() => {
-    if (!target.value) return
-    target.value.removeEventListener('contextmenu', handleContextMenu)
-  })
+  if (isDesktop) {
+    onMounted(() => {
+      if (target.value) {
+        target.value.addEventListener('contextmenu', handleContextMenu)
+      } else {
+        return contextMenuWarn(
+          '添加 contextmenu 监听事件时发生错误，指定的元素不存在'
+        )
+      }
+    })
+
+    onUnmounted(() => {
+      if (target.value) {
+        target.value.removeEventListener('contextmenu', handleContextMenu)
+      } else {
+        return contextMenuWarn(
+          '移除 contextmenu 监听事件时发生错误，指定的元素不存在'
+        )
+      }
+    })
+  } else if (isMobile) {
+    let timeout: NodeJS.Timeout
+    const timedContextMenu = () => {
+      timeout = setTimeout(() => handleContextMenu, 1000)
+    }
+    onMounted(() => {
+      if (target.value) {
+        target.value.addEventListener('mousedown', timedContextMenu)
+        target.value.addEventListener('mouseup', () => clearTimeout(timeout))
+      } else {
+        return contextMenuWarn(
+          '添加 mousedown 和 mouseup 监听事件时发生错误，指定的元素不存在'
+        )
+      }
+    })
+
+    onUnmounted(() => {
+      if (target.value) {
+        target.value.removeEventListener('mousedown', timedContextMenu)
+        target.value.removeEventListener('mouseup', () => clearTimeout(timeout))
+      } else {
+        return contextMenuWarn(
+          '移除 mousedown 和 mouseup 监听事件时发生错误，指定的元素不存在'
+        )
+      }
+    })
+  }
 
   return {
     x,
