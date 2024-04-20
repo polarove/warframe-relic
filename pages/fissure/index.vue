@@ -17,7 +17,7 @@
       :is-empty="steelPathState.empty"
       @steel-finish="
         (outdated: Fissure) =>
-          steelPath.filter((fissure) => !(fissure.id === outdated.id))
+          steelPath.filter((fissure) => fissure.id !== outdated.id)
       "
     />
     <el-divider />
@@ -29,7 +29,7 @@
       :is-empty="empyreanState.empty"
       @empyrean-finish="
         (outdated: Fissure) =>
-          empyrean.filter((fissure) => !(fissure.id === outdated.id))
+          empyrean.filter((fissure) => fissure.id !== outdated.id)
       "
     />
   </div>
