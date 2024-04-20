@@ -7,7 +7,7 @@
       class="min-h-50vh"
       v-loading="originState.loading"
       :is-empty="originState.empty"
-      @origin-finish="(expired: Fissure) => reloadFissure(expired, origin)"
+      @finish="(expired: Fissure) => handleFinish(expired)"
     />
     <el-divider />
     <wt-fissure
@@ -16,7 +16,7 @@
       class="min-h-50vh"
       v-loading="steelPathState.loading"
       :is-empty="steelPathState.empty"
-      @steel-finish="(expired: Fissure) => reloadFissure(expired, steelPath)"
+      @finish="(expired: Fissure) => handleFinish(expired)"
     />
     <el-divider />
     <wt-fissure
@@ -25,7 +25,7 @@
       class="min-h-50vh"
       v-loading="empyreanState.loading"
       :is-empty="empyreanState.empty"
-      @empyrean-finish="(expired: Fissure) => reloadFissure(expired, empyrean)"
+      @finish="(expired: Fissure) => handleFinish(expired)"
     />
   </wt-context-menu-container>
   <wt-spirit />
@@ -37,6 +37,7 @@ import { ElMessage } from 'element-plus'
 import type { Fissure } from '~/types/fissure'
 import { LANGUAGE, PLATFORM } from '~/enums'
 import { ListUtil } from '@polaris_liu/toolcat'
+import { useFissureStore } from '~/store'
 
 useHead({
   title: '裂缝 | warframe-team',
@@ -62,11 +63,13 @@ const empyreanState = reactive({
   empty: false
 })
 
-const addProperty = (fissures: Fissure[]) => {
+const prepareFissures = (fissures: Fissure[]) => {
+  // todo：检测裂缝订阅状态
+  let isSub = false
   return fissures
     .sort((a, b) => a.tierNum - b.tierNum)
     .map((fissure) => {
-      return { ...fissure, subscribed: false, panel: false }
+      return { ...fissure, subscribed: isSub, panel: false }
     })
 }
 
@@ -107,20 +110,53 @@ const fillOrigin = (fissures: Fissure[]) => {
   originState.loading = false
 }
 
-const reloadFissure = (expired: Fissure, list: Fissure[]) => {
+const hasIntersection = (source: string[], target: string[]): string[] => {
+  return source.filter((item) => target.includes(item))
+}
+const indicator = ref<NodeJS.Timeout | undefined>()
+
+const { expiredFissureIdQueue, addExpiredFissureId, dropExpiredFissureIds } =
+  useFissureStore()
+
+const handleFinish = (expired: Fissure) => {
   const id = expired.id
-  list.filter((fissure) => fissure.id !== id)
+  addExpiredFissureId(id)
+  const handleReload = () => {
+    prepareData()
+      .then((res) => {
+        if (res) {
+          const intersection = hasIntersection(
+            res.map((fissure) => fissure.id),
+            expiredFissureIdQueue
+          )
+          if (ListUtil.isEmpty(intersection)) {
+            clearInterval(indicator.value)
+            dropExpiredFissureIds()
+            console.log('[裂缝更新]：更新完毕')
+          } else {
+            console.log('[裂缝更新]：获取的数据尚未更新，继续执行')
+          }
+          return Promise.resolve(res)
+        } else {
+          return Promise.reject('[裂缝更新]：获取到的裂缝数据为空，请刷新页面')
+        }
+      })
+      .then((modified) => fillSteelPath(modified!))
+      .then((leftover) => fillEmpyrean(leftover))
+      .then((leftover) => fillOrigin(leftover))
+      .catch((err) => ElMessage.warning(err))
+  }
+
+  if (indicator.value) {
+    return Promise.reject('[裂缝更新]：仍有已过期的裂缝等待更新，跳过本次刷新')
+  } else {
+    indicator.value = setInterval(() => handleReload(), 10000)
+    return Promise.resolve(indicator.value)
+  }
 }
 
 const handleError = (_: unknown) => {
   ElMessage.error('[数据错误]：处理裂缝数据时发生意外错误')
-}
-
-const handleRequest = (res: any) => {
-  if (res.error.value) {
-    console.error(res.error.value?.cause)
-    return Promise.reject(`[请求失败]: ${res.error.value?.data.error}`)
-  } else return Promise.resolve(unref(res.data))
 }
 
 const prepareData = async (
@@ -142,7 +178,7 @@ const prepareData = async (
   return useFetch<Fissure[]>(url, data)
     .then((res) => handleRequest(res))
     .then((res) => pickValid(res))
-    .then((res) => addProperty(res))
+    .then((res) => prepareFissures(res))
     .then((res) => res)
     .catch((err) => handleError(err))
 }

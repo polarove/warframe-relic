@@ -30,9 +30,7 @@
                       ? 'var(--el-color-primary)'
                       : undefined
                   }"
-                  @click="
-                    (e: MouseEvent) => toggleSubscribe(e, fissure, index, title)
-                  "
+                  @click="toggleSubscribe(fissure)"
                 />
               </div>
             </template>
@@ -55,7 +53,7 @@
               >
                 <template #header>
                   <div class="flex-between items-center">
-                    <span> 订阅{{ getNodeName(fissure.node) }} </span>
+                    <span>符合的订阅规则</span>
                     <div
                       class="i-ep:close"
                       w="1.3em"
@@ -66,14 +64,18 @@
                     ></div>
                   </div>
                 </template>
-                <div class="sub-panel__operations">符合xxx订阅规则</div>
+                <div class="sub-panel__operations">
+                  {{ fissure.tier }} - {{ getNodeName(fissure.node) }} -
+                  {{ fissure.missionType }} -
+                  {{ getNodeNameEn(fissure.node) }}
+                </div>
               </el-card>
             </el-collapse-transition>
           </el-card>
 
           <template #menu>
             <wt-context-menu-item
-              @select="() => menu.fn && menu.fn()"
+              @select="handleMenuSelect(menu)"
               :type="menu.type"
               v-for="menu in generateMenu(fissure)"
             >
@@ -88,7 +90,7 @@
 </template>
 
 <script setup lang="ts">
-import { useFissureSubStore } from '~/store'
+import { useFissureStore } from '~/store'
 import type { ContextMenuOptions } from '~/types/context-menu'
 import type { Fissure } from '~/types/fissure'
 defineProps<{
@@ -103,44 +105,25 @@ const getTimestamp = (dateStr: string) => new Date(dateStr).getTime()
 
 const getNodeName = (node: string) => {
   const name = node.match(/(?<=\().+?(?=\))/g)
-  return name ? ` - ${name}` : ''
+  return name ? name[0] : ''
 }
 
 const getNodeNameEn = (node: string) => node.replace(/\([^)]*\)/g, '')
 
-const emits = defineEmits([
-  'origin-finish',
-  'steel-finish',
-  'empyrean-finish',
-  'settings',
-  'subscribe'
-])
+const emits = defineEmits(['finish', 'select-menu'])
 const handleFinish = (fissure: Fissure) => {
-  if (fissure.isHard) emits('steel-finish', fissure)
-  else if (fissure.isStorm) emits('empyrean-finish', fissure)
-  else emits('origin-finish', fissure)
+  emits('finish', fissure)
 }
 
-const toggleSubscribe = (
-  e: MouseEvent,
-  fissure: Fissure,
-  index: number,
-  title: string
-) => {
-  emits('subscribe', fissure, index, title)
-  const { subs } = useFissureSubStore()
+// todo 还没想好这个面板要干什么
+const toggleSubscribe = (fissure: Fissure) => {
+  fissure.panel = true
+}
 
-  const shakingBell = async () => {
-    fissure.panel = true
-    return Promise.resolve()
-  }
-
-  const checkSubState = async () => {
-    if (subs.includes(fissure)) return Promise.reject('已订阅该裂缝，进行修改')
-    else return Promise.resolve('尚未订阅该裂缝，进行订阅')
-  }
-
-  shakingBell().then(() => checkSubState())
+const handleMenuSelect = (menu: ContextMenuOptions) => {
+  emits('select-menu')
+  const callback = menu.fn
+  if (callback) callback()
 }
 
 const generateMenu = (fissure: Fissure): ContextMenuOptions[] => {
@@ -212,22 +195,7 @@ const generateMenu = (fissure: Fissure): ContextMenuOptions[] => {
     .sub-panel__operations {
       display: flex;
       width: 100%;
-      .operation {
-        flex: 1;
-        padding: 0.2em;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-      }
-      .operation:first-child {
-        border-top-left-radius: 4px;
-        border-bottom-left-radius: 4px;
-      }
-      .operation:last-child {
-        border-top-right-radius: 4px;
-        border-bottom-right-radius: 4px;
-      }
+      justify-content: center;
     }
   }
 }
@@ -246,4 +214,3 @@ const generateMenu = (fissure: Fissure): ContextMenuOptions[] => {
 //   }
 // }
 </style>
-~/components/context-menu/context-menu
