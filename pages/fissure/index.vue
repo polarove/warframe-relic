@@ -176,7 +176,10 @@ const checkDuplications = (fissures: Fissure[]) => {
     if (ListUtil.isEmpty(intersection)) {
       clearInterval(indicator.value)
       dropExpiredFissureIds()
-      console.log('[裂缝更新]：更新完毕')
+      ElNotification.success({
+        title: '裂缝更新',
+        message: '所有裂缝已更新至最新状态'
+      })
       return Promise.resolve(fissures)
     } else {
       return Promise.reject('[裂缝更新]：获取的数据尚未更新，继续执行轮询')
