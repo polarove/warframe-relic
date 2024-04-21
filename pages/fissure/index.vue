@@ -253,11 +253,16 @@ const processUpdate = (
     return source.filter((item) => !target.includes(item))
   }
 
+  const parseLog = (message: string) => {
+    return `[裂缝更新]：${message}`
+  }
+
   const parseState = (defaultState: FissureDataState, newMessage?: string) => {
     if (newMessage) defaultState.tip = newMessage
     return defaultState
   }
 
+  // 检查请求的数据是否已经更新完毕
   const checkOutdates = (fissures: Fissure[]) => {
     if (fissures) {
       const intersection = checkIntersections<string>(
@@ -267,29 +272,35 @@ const processUpdate = (
       if (ListUtil.isEmpty(intersection)) {
         clearInterval(indicator.value)
         dropExpiredFissureIds()
+        console.log(DATA_CLEAN.tip)
+        setState(DATA_CLEAN)
         return Promise.resolve(fissures)
       } else {
-        const message = '[裂缝更新]：获取的数据尚未更新，继续执行轮询'
+        const message = parseLog('获取的数据尚未更新，继续执行轮询')
         setState(parseState(DATA_UPDATING, message))
+        console.log(parseLog('待更新的裂缝为'), expiredFissureIdQueue)
         return Promise.reject(message)
       }
     } else {
-      const message = '[裂缝更新]：获取到的裂缝数据为空，请刷新页面'
+      const message = parseLog('获取到的裂缝数据为空，请刷新页面')
       setState(parseState(DATA_UPDATE_FAILED, message))
       return Promise.reject(message)
     }
   }
 
+  // 过滤出新裂缝
   const checkUpdates = (fissures: Fissure[]) => {
-    const newOrigin = filterNewFissures(fissures, origin.fissure)
-    const newSteelPath = filterNewFissures(fissures, steelPath.fissure)
-    const newEmpyrean = filterNewFissures(fissures, empyrean.fissure)
-    return newOrigin.concat(newSteelPath).concat(newEmpyrean)
+    const currentFissures = origin.fissure
+      .concat(steelPath.fissure)
+      .concat(empyrean.fissure)
+    const updates = filterNewFissures(fissures, currentFissures)
+    console.log('[新裂缝]：', updates)
+    return updates
   }
 
   let times = 1
   const processData = () => {
-    setState(parseState(DATA_UPDATING, `[裂缝更新]：开始第${times}次轮询`))
+    setState(parseState(DATA_UPDATING, parseLog(`开始第${times}次轮询`)))
     times++
     $fetch(url, data)
       .then((res) => checkOutdates(res as Fissure[]))
@@ -299,15 +310,14 @@ const processUpdate = (
       .then((modified) => fillSteelPath(modified!))
       .then((leftover) => fillEmpyrean(leftover))
       .then((leftover) => fillOrigin(leftover))
-      .then(() => setState(DATA_CLEAN))
-      .catch((err) => console.info(err))
+      .catch((err) => console.warn(err))
   }
 
   if (indicator.value) {
-    return console.log('[裂缝更新]：仍有已过期的裂缝等待更新，不再新增interval')
+    return console.log(parseLog('仍有已过期的裂缝等待更新，不再新增interval'))
   } else {
     indicator.value = setInterval(() => processData(), 10000)
-    return console.log(`[裂缝更新]：开始轮询，interval：${indicator.value}`)
+    return console.log(parseLog(`开始轮询，interval：${indicator.value}`))
   }
 }
 /** ---------------------------------  */
