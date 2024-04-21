@@ -88,7 +88,7 @@ import type { Fissure } from '~/types/fissure'
 import { LANGUAGE, PLATFORM } from '~/enums'
 import { ListUtil } from '@polaris_liu/toolcat'
 import { useFissureStore } from '~/store'
-import {VoidUtil} from '@polaris_liu/toolcat
+import { VoidUtil } from '@polaris_liu/toolcat'
 
 const DATA_CLEAN = {
   icon: 'i-ep:circle-check',
@@ -337,7 +337,9 @@ const processUpdate = (
         const currentFissures = origin.fissure
           .concat(steelPath.fissure)
           .concat(empyrean.fissure)
-        const updates = fissures.filter((item) => VoidUtil.isVoid(currentFissures.find((exist) => exist.id === item.id)))
+        const updates = fissures.filter((item) =>
+          VoidUtil.isVoid(currentFissures.find((exist) => exist.id === item.id))
+        )
         const tip = '更新完毕'
         console.log(parseLog(tip))
         setState(parseState(DATA_CLEAN, tip))
