@@ -25,3 +25,17 @@ export interface Fissure extends _FissureBase {
   tier: RELIC_TIER
   tierNum: RELIC_TIER_NUMBER
 }
+
+export interface FissureState {
+  loading: boolean
+  empty: boolean
+  fissure: Fissure[]
+  state: FissureDataState
+}
+
+export interface FissureDataState {
+  icon?: string
+  tip?: string
+  className?: string
+  updating?: boolean
+}

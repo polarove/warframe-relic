@@ -84,7 +84,7 @@
 <script setup lang="ts">
 import { API } from '~/constants'
 import { ElMessage } from 'element-plus'
-import type { Fissure } from '~/types/fissure'
+import type { Fissure, FissureState, FissureDataState } from '~/types/fissure'
 import { LANGUAGE, PLATFORM } from '~/enums'
 import { ListUtil } from '@polaris_liu/toolcat'
 import { useFissureStore } from '~/store'
@@ -150,20 +150,6 @@ const isValidFissure = (fissure: Fissure) => {
   return (
     new Date().getTime() < new Date(fissure.expiry).getTime() || fissure.active
   )
-}
-
-interface FissureState {
-  loading: boolean
-  empty: boolean
-  fissure: Fissure[]
-  state: FissureDataState
-}
-
-interface FissureDataState {
-  icon?: string
-  tip?: string
-  className?: string
-  updating?: boolean
 }
 
 const origin = reactive<FissureState>({
