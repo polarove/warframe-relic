@@ -339,19 +339,21 @@ const processUpdate = (
     }
   }
 
-  const stopUpdate = (fissures: Fissure[], indicator: number | undefined) => {
+  const stopUpdate = (
+    fissures: Fissure[],
+    indicator: NodeJS.Timeout | undefined
+  ) => {
     if (indicator) clearTimeout(indicator)
     return fissures
   }
 
   const launch = (
     state: number = 1,
-    indicator: number | undefined = undefined
+    indicator: NodeJS.Timeout | undefined = undefined
   ): NodeJS.Timeout | void => {
     const message = `正在执行第${state}次更新`
     setState(parseState(DATA_UPDATING, message))
     console.log(parseLog(message))
-    indicator = state
     $fetch(url, data)
       .then((res) => checkUpdates(res as Fissure[]))
       .then((res) => stopUpdate(res, indicator))
@@ -360,7 +362,12 @@ const processUpdate = (
       .then((res) => updateUserView(res))
       .then(() => setState(DATA_CLEAN))
       .catch(() => {
-        const reload = () => setTimeout(() => launch((state += 1)), 30 * 1000)
+        const reload = () => {
+          indicator = setTimeout(
+            () => launch((state += 1), indicator),
+            30 * 1000
+          )
+        }
         return reload()
       })
   }
