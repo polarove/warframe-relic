@@ -122,7 +122,6 @@ const emits = defineEmits([
 ])
 
 const handleFinish = (fissure: Fissure, index: number) => {
-  fissure.valid = false
   emits('finish', fissure, index)
   if (fissure.isHard) return emits('finish-steel', fissure, index)
   else if (fissure.isStorm) return emits('finish-empyrean', fissure, index)

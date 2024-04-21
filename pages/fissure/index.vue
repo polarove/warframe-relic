@@ -24,6 +24,7 @@
       class="min-h-50vh"
       v-loading="origin.loading"
       :is-empty="origin.empty"
+      @finish="(fissure: Fissure) => (fissure.valid = false)"
       @finish-origin="(expired: Fissure) => cleanOrigin(expired)"
     >
       <div class="flex-center">
@@ -44,6 +45,7 @@
       class="min-h-50vh"
       v-loading="steelPath.loading"
       :is-empty="steelPath.empty"
+      @finish="(fissure: Fissure) => (fissure.valid = false)"
       @finish-steel="(expired: Fissure) => cleanSteel(expired)"
     >
       <div class="flex-center">
@@ -64,6 +66,7 @@
       class="min-h-50vh"
       v-loading="empyrean.loading"
       :is-empty="empyrean.empty"
+      @finish="(fissure: Fissure) => (fissure.valid = false)"
       @finish-empyrean="(expired: Fissure) => cleanEmpyrean(expired)"
     >
       <div class="flex-center">
