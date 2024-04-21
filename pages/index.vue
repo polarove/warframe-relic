@@ -1,4 +1,7 @@
 <template>
+  <wt-header>
+    <wt-header-icons />
+  </wt-header>
   <section transition="all">
     <div class="title">
       <animated-underline pb="3px">

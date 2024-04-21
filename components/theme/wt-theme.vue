@@ -10,7 +10,7 @@
 <script setup lang="ts">
 import { THEMES } from '~/enums'
 withDefaults(defineProps<{ size?: string }>(), {
-  size: '1rem'
+  size: '1.7rem'
 })
 const theme = useColorMode()
 const icon = computed(() =>

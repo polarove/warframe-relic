@@ -1,13 +1,13 @@
 <template>
   <section class="wt-header" :class="{ shadow: scrolled }">
     <el-row justify="space-between" items="center" h="100%">
-      <el-col :md="21" :lg="22">
+      <el-col :md="20" :lg="22">
         <nuxt-link to="/" class="logo">
           <wt-logo />
         </nuxt-link>
       </el-col>
-      <el-col :md="3" :lg="2">
-        <header-operations size="1.7em" />
+      <el-col :md="4" :lg="2">
+        <slot></slot>
       </el-col>
     </el-row>
   </section>

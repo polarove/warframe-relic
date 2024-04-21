@@ -1,5 +1,7 @@
 <template>
-  <wt-header />
+  <wt-header>
+    <wt-header-icons />
+  </wt-header>
   <section flex="col" justify="center" items="center" h="70vh">
     <wt-empty description="我们来到了一个没有 tenno 的虚空" />
     <div text="center">

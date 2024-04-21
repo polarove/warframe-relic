@@ -1,4 +1,21 @@
 <template>
+  <client-only>
+    <wt-header>
+      <wt-header-icons>
+        <el-col :span="4">
+          <div
+            class="i-ep:refresh"
+            @click="updateFissure()"
+            :class="pageState.reload"
+            w="1.7em"
+            h="1.7em"
+            color="~ hover:$el-color-primary"
+            cursor="pointer"
+          ></div>
+        </el-col>
+      </wt-header-icons>
+    </wt-header>
+  </client-only>
   <wt-context-menu-container>
     <h1 text="center">裂缝订阅功能仍在制作中</h1>
     <wt-fissure
@@ -91,6 +108,14 @@ const DATA_UPDATE_FAILED = {
   icon: 'i-ep:close-bold',
   tip: '更新失败',
   className: 'failed'
+}
+
+const pageState = reactive({
+  reload: ''
+})
+
+const updateFissure = () => {
+  console.log(2)
 }
 
 useHead({
