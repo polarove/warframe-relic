@@ -1,22 +1,13 @@
 <template>
   <section class="wt-header" :class="{ shadow: scrolled }">
     <el-row justify="space-between" items="center" h="100%">
-      <el-col :span="22">
-        <nuxt-link to="/" class="home">
+      <el-col :md="21" :lg="22">
+        <nuxt-link to="/" class="logo">
           <wt-logo />
         </nuxt-link>
       </el-col>
-      <el-col :span="1" flex="end" items="center">
-        <wt-theme size="1.3rem" />
-        <div ml="2rem">
-          <a
-            class="i-mdi:github"
-            color="~ hover:$el-color-primary"
-            style="transform: scale(1.3)"
-            href="https://github.com/polarove/warframe-team-nuxt"
-          >
-          </a>
-        </div>
+      <el-col :md="3" :lg="2">
+        <header-operations size="1.7em" />
       </el-col>
     </el-row>
   </section>
@@ -35,7 +26,7 @@ const scrolled = computed(() => useWindowScroll().y.value > 0)
   top: 0;
   z-index: 2001;
   height: 57px;
-  .home {
+  .logo {
     color: var(--el-text-color-regular);
     text-decoration: none;
     text-wrap: nowrap;
