@@ -9,10 +9,8 @@
     "postinstall": "nuxt prepare",
     "prepare": "husky",
     "dep:check": "ncu",
-    "dep:update": "ncu -u"
-  },
-  "lint-staged": {
-    "format": "your-cmd"
+    "dep:update": "ncu -u",
+    "dep:interact": "ncu --interactive"
   },
   "license": "MIT",
   "dependencies": {
@@ -41,6 +39,7 @@
     "commitizen": "latest",
     "husky": "latest",
     "lint-staged": "^15.2.2",
+    "npm-check-updates": "^16.14.18",
     "prettier": "^3.2.5",
     "sass": "^1.75.0"
   },
