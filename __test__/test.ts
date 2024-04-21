@@ -13,3 +13,32 @@ const fd = (state: number = 1) => {
     f((state += 1))
   }, 1000)
 }
+
+// promise
+const testPromise = () => {
+  const test = () => {
+    return Promise.resolve(1)
+  }
+
+  const test1 = () => {
+    console.log('test1 succeed')
+    return Promise.resolve(true)
+  }
+  const test2 = () => {
+    console.log('test2 failed')
+    return Promise.reject(false)
+  }
+  const test3 = () => {
+    console.log('test3 will be skipped')
+    return Promise.resolve(true)
+  }
+
+  test()
+    .then(() => test1())
+    .then(() => test2())
+    .then(() => test3())
+    .catch(() =>
+      console.log('this promise should be failed, and test3 should be skipped')
+    )
+}
+testPromise()
