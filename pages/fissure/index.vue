@@ -248,7 +248,6 @@ const fillOrigin = (fissures: Fissure[]) => {
   origin.fissure = fissures
     .filter((fissure) => !fissure.isStorm)
     .filter((fissure) => !fissure.isHard)
-
   origin.loading = false
 }
 
