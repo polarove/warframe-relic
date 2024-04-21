@@ -338,7 +338,9 @@ const processUpdate = (
         const updates = fissures.filter((item) =>
           currentFissures.find((exist) => exist.id !== item.id)
         )
-        console.log(parseLog('更新完毕'))
+        const tip = '更新完毕'
+        console.log(parseLog(tip))
+        setState(parseState(DATA_CLEAN, tip))
         return Promise.resolve(updates)
       } else {
         const message = parseLog('获取的数据尚未更新，重新获取中...')
@@ -372,7 +374,6 @@ const processUpdate = (
       .then((res) => checkDataState(res))
       .then((res) => prepareFissures(res))
       .then((res) => updateUserView(res))
-      .then(() => setState(DATA_CLEAN))
       .catch(() => {
         const reload = () => {
           indicator = setTimeout(
