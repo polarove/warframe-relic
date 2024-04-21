@@ -7,7 +7,16 @@
         </nuxt-link>
       </el-col>
       <el-col :span="1" flex="end" items="center">
-        <wt-theme size="1.3rem" />
+        <wt-theme size="1.3rem icon" />
+        <div ml="2rem">
+          <a
+            class="i-mdi:github"
+            color="~ hover:$el-color-primary"
+            style="transform: scale(1.3)"
+            href="https://github.com/polarove/warframe-team-nuxt"
+          >
+          </a>
+        </div>
       </el-col>
     </el-row>
   </section>

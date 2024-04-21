@@ -1,26 +1,66 @@
 <template>
-  <component :is="block" class="animated-text"> <slot></slot> </component>
+  <component
+    :is="block"
+    :style="`--underline-text-height:${height}`"
+    class="underline-text"
+    :class="classes"
+  >
+    <slot></slot>
+  </component>
 </template>
 
 <script setup lang="ts">
-withDefaults(defineProps<{ block?: 'div' | 'span'; text?: string }>(), {
-  block: 'span',
-  text: '默认字符'
+const props = withDefaults(
+  defineProps<{
+    block?: 'div' | 'span'
+    text?: string
+    animated?: boolean
+    height?: string
+    visible?: 'hover' | 'always'
+  }>(),
+  {
+    block: 'span',
+    text: '默认字符',
+    animated: true,
+    height: '2px',
+    visible: 'hover'
+  }
+)
+
+const classes = computed(() => {
+  const e = props.animated ? 'animated' : 'static'
+  return e.concat(' ').concat(props.visible)
 })
 </script>
 
 <style lang="scss" scoped>
-.animated-text {
+.underline-text.always {
   position: relative;
   &::before,
   &::after {
     content: '';
     position: absolute;
-    height: 1px;
+    height: var(--underline-text-height);
     bottom: 0;
     display: inline-block;
     transform-origin: left;
   }
+}
+
+.underline-text.hover {
+  position: relative;
+  &:hover::before,
+  &:hover::after {
+    content: '';
+    position: absolute;
+    height: var(--underline-text-height);
+    bottom: 0;
+    display: inline-block;
+    transform-origin: left;
+  }
+}
+
+.underline-text.animated {
   &::before {
     left: 0;
     width: 0;
@@ -32,6 +72,14 @@ withDefaults(defineProps<{ block?: 'div' | 'span'; text?: string }>(), {
     right: 0;
     width: 100%;
     animation: grow-reverse 3s infinite;
+    background-color: var(--el-color-primary);
+  }
+}
+
+.underline-text.static {
+  &::after {
+    left: 0;
+    width: 100%;
     background-color: var(--el-color-primary);
   }
 }

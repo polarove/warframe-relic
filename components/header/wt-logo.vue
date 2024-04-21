@@ -1,6 +1,6 @@
 <template>
   <span class="wt-logo">
-    <nuxt-icon name="warframe-team-logo-black" />
+    <nuxt-icon name="logo/warframe-team" />
   </span>
 </template>
 

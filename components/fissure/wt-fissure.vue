@@ -4,11 +4,7 @@
       <h1>{{ title }}</h1>
       <slot></slot>
     </div>
-    <el-empty v-if="isEmpty" description="空">
-      <template #image>
-        <nuxt-icon name="state/empty" />
-      </template>
-    </el-empty>
+    <wt-empty v-if="isEmpty" />
     <el-row v-else>
       <el-col
         v-for="(fissure, index) in fissures"
