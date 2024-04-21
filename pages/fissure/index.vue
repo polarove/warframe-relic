@@ -345,14 +345,16 @@ const processUpdate = (
         await nextTick()
         return Promise.resolve(updates)
       } else {
-        const message = parseLog('获取的数据尚未更新，重新获取中...')
+        const message = parseLog(
+          `第${state}次获取的数据已经过期，重新获取中...`
+        )
         console.log(message)
         setState(parseState(DATA_UPDATING, message))
         await nextTick()
         return Promise.reject(message)
       }
     } else {
-      const message = parseLog('获取到的裂缝数据为空，请刷新页面')
+      const message = parseLog(`第${state}次获取到的裂缝数据为空，请刷新页面`)
       console.log(message)
       setState(parseState(DATA_UPDATE_FAILED, message))
       await nextTick()
