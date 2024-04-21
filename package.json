@@ -3,33 +3,35 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "d": "nuxt dev --port 3000",
+    "d": "nuxt dev --port 3000 --host",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "prepare": "husky"
+    "prepare": "husky",
+    "dep:check": "ncu",
+    "dep:update": "ncu -u"
   },
   "lint-staged": {
     "format": "your-cmd"
   },
   "license": "MIT",
   "dependencies": {
-    "@element-plus/nuxt": "^1.0.7",
+    "@element-plus/nuxt": "^1.0.9",
     "@iconify-json/ep": "^1.1.15",
-    "@iconify-json/mdi": "^1.1.64",
-    "@nuxtjs/color-mode": "^3.3.2",
+    "@iconify-json/mdi": "^1.1.66",
+    "@nuxtjs/color-mode": "^3.4.0",
     "@pinia-plugin-persistedstate/nuxt": "^1.2.0",
     "@pinia/nuxt": "^0.5.1",
     "@polaris_liu/toolcat": "1.0.22",
-    "@vue/shared": "^3.4.21",
+    "@vue/shared": "^3.4.23",
     "@vueuse/core": "^10.9.0",
     "@vueuse/motion": "^2.1.0",
     "@vueuse/nuxt": "^10.9.0",
-    "element-plus": "^2.6.1",
-    "nuxt": "^3.10.3",
+    "element-plus": "^2.7.1",
+    "nuxt": "^3.11.2",
     "nuxt-icons": "^3.2.1",
-    "vue": "^3.4.19",
-    "vue-router": "^4.3.0"
+    "vue": "^3.4.23",
+    "vue-router": "^4.3.2"
   },
   "devDependencies": {
     "@cz-translated-changelog/zh-cn": "^0.0.42",
@@ -40,7 +42,7 @@
     "husky": "latest",
     "lint-staged": "^15.2.2",
     "prettier": "^3.2.5",
-    "sass": "^1.71.1"
+    "sass": "^1.75.0"
   },
   "config": {
     "commitizen": {
