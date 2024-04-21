@@ -10,7 +10,8 @@
     "prepare": "husky",
     "dep:check": "ncu",
     "dep:update": "ncu -u",
-    "dep:interact": "ncu --interactive"
+    "dep:interact": "ncu --interactive",
+    "test": "vitest"
   },
   "license": "MIT",
   "dependencies": {
@@ -28,6 +29,7 @@
     "element-plus": "^2.7.1",
     "nuxt": "^3.11.2",
     "nuxt-icons": "^3.2.1",
+    "typescript": "^5.4.5",
     "vue": "^3.4.23",
     "vue-router": "^4.3.2"
   },
@@ -41,7 +43,8 @@
     "lint-staged": "^15.2.2",
     "npm-check-updates": "^16.14.18",
     "prettier": "^3.2.5",
-    "sass": "^1.75.0"
+    "sass": "^1.75.0",
+    "vitest": "^1.5.0"
   },
   "config": {
     "commitizen": {

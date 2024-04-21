@@ -1,8 +1,8 @@
 FROM node:21.4.0 AS build
 WORKDIR /app
-RUN corepack enable pnpm
+RUN corepack enable yarn
 COPY . /app/
-RUN pnpm install && pnpm build
+RUN yarn && yarn build
 
 FROM node:21.4.0 AS final
 ENV NODE_ENV=production
