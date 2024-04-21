@@ -231,28 +231,24 @@ const prepareFissures = (fissures: Fissure[]) => {
 
 const fillSteelPath = (fissures: Fissure[]) => {
   if (ListUtil.isEmpty(fissures)) steelPath.empty = true
-  fissures
-    .filter((fissure) => fissure.isHard)
-    .forEach((hard) => steelPath.fissure.push(hard))
+  steelPath.fissure = fissures.filter((fissure) => fissure.isHard)
   steelPath.loading = false
   return Promise.resolve(fissures)
 }
 
 const fillEmpyrean = (fissures: Fissure[]) => {
   if (ListUtil.isEmpty(fissures)) empyrean.empty = true
-  fissures
-    .filter((fissure) => fissure.isStorm)
-    .forEach((hard) => empyrean.fissure.push(hard))
+  empyrean.fissure = fissures.filter((fissure) => fissure.isStorm)
   empyrean.loading = false
   return Promise.resolve(fissures)
 }
 
 const fillOrigin = (fissures: Fissure[]) => {
   if (ListUtil.isEmpty(fissures)) origin.empty = true
-  fissures
+  origin.fissure = fissures
     .filter((fissure) => !fissure.isStorm)
     .filter((fissure) => !fissure.isHard)
-    .forEach((normal) => origin.fissure.push(normal))
+
   origin.loading = false
 }
 
