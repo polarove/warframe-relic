@@ -16,7 +16,6 @@ test('删除数组', () => {
       id: '4'
     }
   ]
-  testFissure.splice(2, 1)
   const expected = [
     {
       id: '1'
@@ -29,9 +28,9 @@ test('删除数组', () => {
     }
   ]
   expect(
-    testFissure.every((item) =>
-      expected.find((expect) => item.id === expect.id)
-    )
+    testFissure
+      .splice(2, 1)
+      .every((item) => expected.find((expect) => item.id === expect.id))
   ).toBe(true)
 })
 

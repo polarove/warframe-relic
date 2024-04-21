@@ -92,22 +92,26 @@ import { useFissureStore } from '~/store'
 const DATA_CLEAN = {
   icon: 'i-ep:circle-check',
   tip: '已是最新',
-  className: 'checked'
+  className: 'checked',
+  updating: false
 }
 const DATA_OUTDATED = {
   icon: 'i-ep:warning',
   tip: '需要更新',
-  className: 'outdated'
+  className: 'outdated',
+  updating: false
 }
 const DATA_UPDATING = {
   icon: 'i-ep:loading',
   tip: '正在更新',
-  className: 'updating'
+  className: 'updating',
+  updating: true
 }
 const DATA_UPDATE_FAILED = {
   icon: 'i-ep:close-bold',
   tip: '更新失败',
-  className: 'failed'
+  className: 'failed',
+  updating: false
 }
 
 const pageState = reactive({
@@ -158,6 +162,7 @@ interface FissureDataState {
   icon?: string
   tip?: string
   className?: string
+  updating?: boolean
 }
 
 const origin = reactive<FissureState>({
@@ -167,7 +172,8 @@ const origin = reactive<FissureState>({
   state: {
     icon: '',
     tip: '',
-    className: ''
+    className: '',
+    updating: false
   }
 })
 
@@ -178,7 +184,8 @@ const steelPath = reactive<FissureState>({
   state: {
     icon: '',
     tip: '',
-    className: ''
+    className: '',
+    updating: false
   }
 })
 
@@ -189,7 +196,8 @@ const empyrean = reactive<FissureState>({
   state: {
     icon: '',
     tip: '',
-    className: ''
+    className: '',
+    updating: false
   }
 })
 
@@ -253,6 +261,7 @@ const fillOrigin = (fissures: Fissure[]) => {
 // 倒计时结束时清除过期的裂缝
 const cleanOrigin = (expired: Fissure) => {
   origin.fissure = origin.fissure.filter((fissure) => fissure.id !== expired.id)
+  if (origin.state.updating) return
   origin.state = DATA_UPDATING
   processUpdate(
     expired,
@@ -266,6 +275,7 @@ const cleanSteel = (expired: Fissure) => {
   steelPath.fissure = steelPath.fissure.filter(
     (fissure) => fissure.id !== expired.id
   )
+  if (steelPath.state.updating) return
   steelPath.state = DATA_UPDATING
   processUpdate(
     expired,
@@ -279,6 +289,7 @@ const cleanEmpyrean = (expired: Fissure) => {
   empyrean.fissure = empyrean.fissure.filter(
     (fissure) => fissure.id !== expired.id
   )
+  if (empyrean.state.updating) return
   empyrean.state = DATA_UPDATING
   processUpdate(
     expired,
@@ -311,8 +322,11 @@ const processUpdate = (
   }
 
   // 检查请求的数据是否已经更新完毕
-  const checkUpdates = (fissures: Fissure[]) => {
+  const checkUpdates = (fissures: Fissure[], state: number) => {
     if (fissures) {
+      const message = `正在对第${state}次更新进行检查`
+      setState(parseState(DATA_UPDATING, message))
+      console.log(parseLog(message))
       const intersection = fissures
         .map((fissure) => fissure.id)
         .filter((id) => expiredFissureIdQueue.includes(id))
@@ -321,19 +335,20 @@ const processUpdate = (
         const currentFissures = origin.fissure
           .concat(steelPath.fissure)
           .concat(empyrean.fissure)
-        const updates = fissures.filter(
-          (item) => !currentFissures.includes(item)
+        const updates = fissures.filter((item) =>
+          currentFissures.find((exist) => exist.id !== item.id)
         )
-        console.log('[当前裂缝]：', currentFissures)
-        console.log('[新裂缝]：', updates)
+        console.log(parseLog(message))
         return Promise.resolve(updates)
       } else {
         const message = parseLog('获取的数据尚未更新，重新获取中...')
+        console.log(parseLog(message))
         setState(parseState(DATA_UPDATING, message))
         return Promise.reject(message)
       }
     } else {
       const message = parseLog('获取到的裂缝数据为空，请刷新页面')
+      console.log(parseLog(message))
       setState(parseState(DATA_UPDATE_FAILED, message))
       return Promise.reject(message)
     }
@@ -351,11 +366,8 @@ const processUpdate = (
     state: number = 1,
     indicator: NodeJS.Timeout | undefined = undefined
   ): NodeJS.Timeout | void => {
-    const message = `正在执行第${state}次更新`
-    setState(parseState(DATA_UPDATING, message))
-    console.log(parseLog(message))
     $fetch(url, data)
-      .then((res) => checkUpdates(res as Fissure[]))
+      .then((res) => checkUpdates(res as Fissure[], state))
       .then((res) => stopUpdate(res, indicator))
       .then((res) => checkDataState(res))
       .then((res) => prepareFissures(res))
