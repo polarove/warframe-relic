@@ -322,13 +322,18 @@ const processUpdate = (
     return defaultState
   }
 
+  const updateState = (tip: string, state: FissureDataState) => {
+    const message = parseLog(tip)
+    console.log(message)
+    setState(parseState(state, message))
+    return message
+  }
+
   // 检查请求的数据是否已经更新完毕
-  const checkUpdates = async (fissures: Fissure[], state: number) => {
+  const checkUpdates = async (fissures: Fissure[], times: number) => {
     if (fissures) {
-      const message = `正在对第${state}次更新进行检查`
-      setState(parseState(DATA_UPDATING, message))
+      updateState(`正在对第${times}次更新进行检查`, DATA_UPDATING)
       await nextTick()
-      console.log(parseLog(message))
       const intersection = fissures
         .map((fissure) => fissure.id)
         .filter((id) => expiredFissureIdQueue.includes(id))
@@ -340,26 +345,24 @@ const processUpdate = (
         const updates = fissures.filter((item) =>
           VoidUtil.isVoid(currentFissures.find((exist) => exist.id === item.id))
         )
-        const tip = '更新完毕'
-        console.log(parseLog(tip))
-        setState(parseState(DATA_CLEAN, tip))
+        updateState('更新完毕', DATA_CLEAN)
         await nextTick()
         return Promise.resolve(updates)
       } else {
-        const message = parseLog(
-          `第${state}次获取的数据已经过期，重新获取中...`
+        const failedTip = updateState(
+          `第${times}次获取的数据已经过期，重新获取中...`,
+          DATA_UPDATING
         )
-        console.log(message)
-        setState(parseState(DATA_UPDATING, message))
         await nextTick()
-        return Promise.reject(message)
+        return Promise.reject(failedTip)
       }
     } else {
-      const message = parseLog(`第${state}次获取到的裂缝数据为空，请刷新页面`)
-      console.log(message)
-      setState(parseState(DATA_UPDATE_FAILED, message))
+      const errorTip = updateState(
+        `第${times}次获取到的裂缝数据为空，请刷新页面`,
+        DATA_UPDATE_FAILED
+      )
       await nextTick()
-      return Promise.reject(message)
+      return Promise.reject(errorTip)
     }
   }
 
