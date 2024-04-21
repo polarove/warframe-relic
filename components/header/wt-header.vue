@@ -7,7 +7,7 @@
         </nuxt-link>
       </el-col>
       <el-col :span="1" flex="end" items="center">
-        <wt-theme size="1.3rem icon" />
+        <wt-theme size="1.3rem" />
         <div ml="2rem">
           <a
             class="i-mdi:github"
