@@ -338,17 +338,17 @@ const processUpdate = (
         const updates = fissures.filter((item) =>
           currentFissures.find((exist) => exist.id !== item.id)
         )
-        console.log(parseLog(message))
+        console.log(parseLog('更新完毕'))
         return Promise.resolve(updates)
       } else {
         const message = parseLog('获取的数据尚未更新，重新获取中...')
-        console.log(parseLog(message))
+        console.log(message)
         setState(parseState(DATA_UPDATING, message))
         return Promise.reject(message)
       }
     } else {
       const message = parseLog('获取到的裂缝数据为空，请刷新页面')
-      console.log(parseLog(message))
+      console.log(message)
       setState(parseState(DATA_UPDATE_FAILED, message))
       return Promise.reject(message)
     }
