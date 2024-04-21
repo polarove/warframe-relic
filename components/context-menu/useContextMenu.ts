@@ -43,10 +43,6 @@ export const useContextMenu = (
     onUnmounted(() => {
       if (target.value) {
         target.value.removeEventListener('contextmenu', handleContextMenu)
-      } else {
-        return contextMenuWarn(
-          '移除 contextmenu 监听事件时发生错误，指定的元素不存在'
-        )
       }
     })
   } else if (isMobile) {
@@ -69,10 +65,6 @@ export const useContextMenu = (
       if (target.value) {
         target.value.removeEventListener('mousedown', timedContextMenu)
         target.value.removeEventListener('mouseup', () => clearTimeout(timeout))
-      } else {
-        return contextMenuWarn(
-          '移除 mousedown 和 mouseup 监听事件时发生错误，指定的元素不存在'
-        )
       }
     })
   }
