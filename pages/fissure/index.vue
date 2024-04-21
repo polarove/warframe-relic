@@ -244,15 +244,6 @@ const processUpdate = (
   const id = expired.id
   addExpiredFissureId(id)
   const { url, data } = prepareRequest()
-
-  const checkIntersections = <T,>(source: T[], target: T[]): T[] => {
-    return source.filter((item) => target.includes(item))
-  }
-
-  const filterNewFissures = <T,>(source: T[], target: T[]): T[] => {
-    return source.filter((item) => !target.includes(item))
-  }
-
   const parseLog = (message: string) => {
     return `[裂缝更新]：${message}`
   }
@@ -265,10 +256,10 @@ const processUpdate = (
   // 检查请求的数据是否已经更新完毕
   const checkOutdates = (fissures: Fissure[]) => {
     if (fissures) {
-      const intersection = checkIntersections<string>(
-        fissures.map((fissure) => fissure.id),
-        expiredFissureIdQueue
-      )
+      const intersection = fissures
+        .map((fissure) => fissure.id)
+        .filter((id) => expiredFissureIdQueue.includes(id))
+
       if (ListUtil.isEmpty(intersection)) {
         clearInterval(indicator.value)
         dropExpiredFissureIds()
@@ -293,7 +284,8 @@ const processUpdate = (
     const currentFissures = origin.fissure
       .concat(steelPath.fissure)
       .concat(empyrean.fissure)
-    const updates = filterNewFissures(fissures, currentFissures)
+    const updates = fissures.filter((item) => !currentFissures.includes(item))
+    console.log('[当前裂缝]：', currentFissures)
     console.log('[新裂缝]：', updates)
     return updates
   }
