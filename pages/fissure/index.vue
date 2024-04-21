@@ -325,7 +325,8 @@ const processUpdate = (
   const checkUpdates = async (fissures: Fissure[], state: number) => {
     if (fissures) {
       const message = `正在对第${state}次更新进行检查`
-      await nextTick(() => setState(parseState(DATA_UPDATING, message)))
+      setState(parseState(DATA_UPDATING, message))
+      await nextTick()
       console.log(parseLog(message))
       const intersection = fissures
         .map((fissure) => fissure.id)
@@ -340,18 +341,21 @@ const processUpdate = (
         )
         const tip = '更新完毕'
         console.log(parseLog(tip))
-        await nextTick(() => setState(parseState(DATA_CLEAN, tip)))
+        setState(parseState(DATA_CLEAN, tip))
+        await nextTick()
         return Promise.resolve(updates)
       } else {
         const message = parseLog('获取的数据尚未更新，重新获取中...')
         console.log(message)
-        await nextTick(() => setState(parseState(DATA_UPDATING, message)))
+        setState(parseState(DATA_UPDATING, message))
+        await nextTick()
         return Promise.reject(message)
       }
     } else {
       const message = parseLog('获取到的裂缝数据为空，请刷新页面')
       console.log(message)
-      await nextTick(() => setState(parseState(DATA_UPDATE_FAILED, message)))
+      setState(parseState(DATA_UPDATE_FAILED, message))
+      await nextTick()
       return Promise.reject(message)
     }
   }
