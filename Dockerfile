@@ -1,5 +1,6 @@
 FROM node:21.4.0 AS build
 WORKDIR /app
+RUN corepack enable pnpm
 COPY . /app/
 RUN pnpm i && pnpm run build
 
