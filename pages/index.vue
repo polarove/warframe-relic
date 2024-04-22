@@ -4,7 +4,7 @@
   </wt-header>
   <section transition="all">
     <div class="title">
-      <animated-underline pb="3px">
+      <animated-underline :animated="true" visible="always" pb="3px">
         <el-text>不仅仅是组队</el-text>
       </animated-underline>
       <h1 class="title-primary">Warframe Team</h1>

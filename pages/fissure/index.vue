@@ -6,7 +6,7 @@
           <div
             class="i-ep:refresh"
             @click="updateManually()"
-            :class="manualUpdate"
+            :class="pageState.class"
             w="1.7em"
             h="1.7em"
             color="~ hover:$el-color-primary"
@@ -118,11 +118,6 @@ const DATA_UPDATE_FAILED = {
   updating: false
 }
 
-useHead({
-  title: '裂缝 | warframe-team',
-  link: [{ rel: 'shortcut icon', href: './fissure-logo-white.svg' }]
-})
-
 const prepareRequest = (
   platform: PLATFORM = PLATFORM.PC,
   language: LANGUAGE = LANGUAGE.ZH
@@ -182,6 +177,50 @@ const empyrean = reactive<FissureState>({
     updating: false
   }
 })
+
+/** ---------------------------------- */
+const pageState = reactive({
+  updating: false,
+  class: 'state-icon'
+})
+const updateManually = () => {
+  const checkingForUpdates = (fissures: Fissure[]) => {
+    origin.state = DATA_UPDATING
+    empyrean.state = DATA_UPDATING
+    steelPath.state = DATA_UPDATING
+    pageState.updating = true
+    pageState.class = `state-icon ${DATA_UPDATING.className} ${DATA_UPDATING.icon}`
+    return fissures
+  }
+
+  const finishUpdate = () => {
+    origin.state = DATA_CLEAN
+    empyrean.state = DATA_CLEAN
+    steelPath.state = DATA_CLEAN
+    pageState.updating = false
+    pageState.class = `state-icon ${DATA_CLEAN.className} ${DATA_CLEAN.icon}`
+  }
+
+  const updateFailed = (err: string | undefined) => {
+    handleError(err)
+    origin.state = DATA_UPDATE_FAILED
+    empyrean.state = DATA_UPDATE_FAILED
+    steelPath.state = DATA_UPDATE_FAILED
+    pageState.updating = false
+    pageState.class = `state-icon ${DATA_UPDATE_FAILED.className} ${DATA_UPDATE_FAILED.icon}`
+  }
+
+  const { url, data } = prepareRequest()
+  $fetch<Fissure[]>(url, data)
+    .then((res) => checkingForUpdates(res))
+    .then((res) => prepareFissures(res))
+    .then((res) => checkDataState(res))
+    .then((modified) => fillSteelPath(modified!))
+    .then((leftover) => fillEmpyrean(leftover))
+    .then((leftover) => fillOrigin(leftover))
+    .then(() => finishUpdate())
+    .catch((err) => updateFailed(err))
+}
 
 const checkDataState = (fissures: Fissure[]) => {
   const originDataState = origin.fissure.every((fissure) =>
@@ -246,13 +285,13 @@ const fillOrigin = (fissures: Fissure[]) => {
 // 倒计时结束时清除过期的裂缝
 const cleanOrigin = (expired: Fissure) => {
   origin.fissure = origin.fissure.filter((fissure) => fissure.id !== expired.id)
-  if (origin.state.updating) return
+  if (pageState.updating) return
+  pageState.updating = true
   origin.state = DATA_UPDATING
   processUpdate(
     expired,
     '始源星系',
-    (state: FissureDataState) => (origin.state = state),
-    (fissures: Fissure[]) => fillOrigin(fissures)
+    (state: FissureDataState) => (origin.state = state)
   )
 }
 
@@ -260,13 +299,13 @@ const cleanSteel = (expired: Fissure) => {
   steelPath.fissure = steelPath.fissure.filter(
     (fissure) => fissure.id !== expired.id
   )
-  if (steelPath.state.updating) return
+  if (pageState.updating) return
+  pageState.updating = true
   steelPath.state = DATA_UPDATING
   processUpdate(
     expired,
     '钢铁之路',
-    (state: FissureDataState) => (steelPath.state = state),
-    (fissures: Fissure[]) => fillSteelPath(fissures)
+    (state: FissureDataState) => (steelPath.state = state)
   )
 }
 
@@ -274,13 +313,13 @@ const cleanEmpyrean = (expired: Fissure) => {
   empyrean.fissure = empyrean.fissure.filter(
     (fissure) => fissure.id !== expired.id
   )
-  if (empyrean.state.updating) return
+  if (pageState.updating) return
+  pageState.updating = true
   empyrean.state = DATA_UPDATING
   processUpdate(
     expired,
     '九重天',
-    (state: FissureDataState) => (empyrean.state = state),
-    (fissures: Fissure[]) => fillEmpyrean(fissures)
+    (state: FissureDataState) => (empyrean.state = state)
   )
 }
 
@@ -290,8 +329,7 @@ const { expiredFissureIdQueue, addExpiredFissureId, dropExpiredFissureIds } =
 const processUpdate = (
   expired: Fissure,
   name: string,
-  setState: (state: FissureDataState) => void,
-  updateUserView: (fissures: Fissure[]) => void
+  setState: (state: FissureDataState) => void
 ) => {
   const id = expired.id
   !expiredFissureIdQueue.includes(id) && addExpiredFissureId(id)
@@ -375,13 +413,16 @@ const processUpdate = (
         return fissures
       })
       .then((fissures) => checkUpdates(fissures, state))
-      .then((res) => {
-        updateState(res.message, res.state)
-        return res
+      .then((updates) => {
+        updateState(updates.message, updates.state)
+        return updates
       })
-      .then((res) => stopUpdate(res.fissures, indicator))
-      .then((res) => prepareFissures(res))
-      .then((res) => updateUserView(res))
+      .then((updates) => stopUpdate(updates.fissures, indicator))
+      .then((fissures) => prepareFissures(fissures))
+      .then((modified) => fillSteelPath(modified!))
+      .then((leftover) => fillEmpyrean(leftover))
+      .then((leftover) => fillOrigin(leftover))
+      .then(() => (pageState.updating = false))
       .catch((err) => {
         updateState(err.message, err.state)
         const reload = () => {
@@ -411,51 +452,15 @@ const prepareData = () => {
 }
 prepareData()
 
-/** ---------------------------------- */
-const manualUpdate = ref('')
-const updateManually = () => {
-  const checkingForUpdates = (fissures: Fissure[]) => {
-    origin.state = DATA_UPDATING
-    empyrean.state = DATA_UPDATING
-    steelPath.state = DATA_UPDATING
-    manualUpdate.value = `state-icon ${DATA_UPDATING.className} ${DATA_UPDATING.icon}`
-    return fissures
-  }
-
-  const finishUpdate = () => {
-    origin.state = DATA_CLEAN
-    empyrean.state = DATA_CLEAN
-    steelPath.state = DATA_CLEAN
-    manualUpdate.value = `state-icon ${DATA_CLEAN.className} ${DATA_CLEAN.icon}`
-  }
-
-  const updateFailed = (err: string | undefined) => {
-    handleError(err)
-    origin.state = DATA_UPDATE_FAILED
-    empyrean.state = DATA_UPDATE_FAILED
-    steelPath.state = DATA_UPDATE_FAILED
-    manualUpdate.value = `state-icon ${DATA_UPDATE_FAILED.className} ${DATA_UPDATE_FAILED.icon}`
-  }
-
-  const { url, data } = prepareRequest()
-  $fetch<Fissure[]>(url, data)
-    .then((res) => checkingForUpdates(res))
-    .then((res) => prepareFissures(res))
-    .then((res) => checkDataState(res))
-    .then((modified) => fillSteelPath(modified!))
-    .then((leftover) => fillEmpyrean(leftover))
-    .then((leftover) => fillOrigin(leftover))
-    .then(() => finishUpdate())
-    .catch((err) => updateFailed(err))
-}
-
 const handleError = (err: string | undefined) => {
   ElMessage.error(
     err ? err : '[数据错误]：处理裂缝数据时发生意外错误，请刷新页面'
   )
 }
+
 useHead({
-  title: '裂缝 | warframe-team'
+  title: '裂缝 | warframe-team',
+  link: [{ rel: 'shortcut icon', href: './fissure-logo-white.svg' }]
 })
 </script>
 
