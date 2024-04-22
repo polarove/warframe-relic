@@ -373,7 +373,6 @@ const processUpdate = (
     $fetch(url, data)
       .then((res) => checkUpdates(res as Fissure[], state))
       .then((res) => stopUpdate(res, indicator))
-      .then((res) => checkDataState(res))
       .then((res) => prepareFissures(res))
       .then((res) => updateUserView(res))
       .catch(() => {
@@ -395,8 +394,8 @@ const prepareData = () => {
   const { handleServerSideRequest, url, data } = prepareRequest()
   useFetch<Fissure[]>(url, data)
     .then((res) => handleServerSideRequest(res))
-    .then((res) => checkDataState(res))
     .then((res) => prepareFissures(res))
+    .then((res) => checkDataState(res))
     .then((modified) => fillSteelPath(modified!))
     .then((leftover) => fillEmpyrean(leftover))
     .then((leftover) => fillOrigin(leftover))
