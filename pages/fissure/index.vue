@@ -250,10 +250,18 @@ const prepareFissures = (fissures: Fissure[]) => {
     })
 }
 
+const currentFissures = () =>
+  origin.fissure.concat(steelPath.fissure).concat(empyrean.fissure)
+
 const fillSteelPath = (fissures: Fissure[]) => {
   if (ListUtil.isEmpty(fissures)) steelPath.empty = true
   fissures
     .filter((fissure) => fissure.isHard)
+    .filter((fissure) =>
+      VoidUtil.isVoid(
+        currentFissures().find((exist) => exist.id === fissure.id)
+      )
+    )
     .forEach((fissure) => steelPath.fissure.push(fissure))
   steelPath.fissure.sort((a, b) => a.tierNum - b.tierNum)
   steelPath.loading = false
@@ -264,6 +272,11 @@ const fillEmpyrean = (fissures: Fissure[]) => {
   if (ListUtil.isEmpty(fissures)) empyrean.empty = true
   fissures
     .filter((fissure) => fissure.isStorm)
+    .filter((fissure) =>
+      VoidUtil.isVoid(
+        currentFissures().find((exist) => exist.id === fissure.id)
+      )
+    )
     .forEach((fissure) => empyrean.fissure.push(fissure))
   empyrean.fissure.sort((a, b) => a.tierNum - b.tierNum)
   empyrean.loading = false
@@ -275,6 +288,11 @@ const fillOrigin = (fissures: Fissure[]) => {
   fissures
     .filter((fissure) => !fissure.isStorm)
     .filter((fissure) => !fissure.isHard)
+    .filter((fissure) =>
+      VoidUtil.isVoid(
+        currentFissures().find((exist) => exist.id === fissure.id)
+      )
+    )
     .forEach((fissure) => origin.fissure.push(fissure))
   origin.fissure.sort((a, b) => a.tierNum - b.tierNum)
   origin.loading = false
@@ -371,13 +389,12 @@ const processUpdate = (
         .filter((id) => expiredFissureIdQueue.includes(id))
       if (ListUtil.isEmpty(intersection)) {
         dropExpiredFissureIds()
-        const currentFissures = origin.fissure
-          .concat(steelPath.fissure)
-          .concat(empyrean.fissure)
         const updates = fissures.filter((item) =>
-          VoidUtil.isVoid(currentFissures.find((exist) => exist.id === item.id))
+          VoidUtil.isVoid(
+            currentFissures().find((exist) => exist.id === item.id)
+          )
         )
-        logFissure(currentFissures, fissures, updates)
+        logFissure(currentFissures(), fissures, updates)
         return Promise.resolve({
           fissures: updates,
           message: '更新完毕',
