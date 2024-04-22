@@ -313,6 +313,18 @@ const processUpdate = (
     return message
   }
 
+  const logFissure = (a: Fissure[], b: Fissure[], c: Fissure[]) => {
+    console.log(
+      '------------------------------------------------------------------------------------------------------------------------------------------'
+    )
+    console.log('当前：', a)
+    console.log('获取的：', b)
+    console.log('不同的', c)
+    console.log(
+      '------------------------------------------------------------------------------------------------------------------------------------------'
+    )
+  }
+
   // 检查请求的数据是否已经更新完毕
   const checkUpdates = async (fissures: Fissure[], times: number) => {
     if (fissures) {
@@ -327,6 +339,7 @@ const processUpdate = (
         const updates = fissures.filter((item) =>
           VoidUtil.isVoid(currentFissures.find((exist) => exist.id === item.id))
         )
+        logFissure(currentFissures, fissures, updates)
         return Promise.resolve({
           fissures: updates,
           message: parseLog('更新完毕'),
