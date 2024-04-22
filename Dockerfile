@@ -1,7 +1,7 @@
 FROM node:21.4.0 AS build
 WORKDIR /app
 COPY . /app/
-RUN npm i && npm run build
+RUN pnpm i && pnpm run build
 
 FROM node:21.4.0 AS final
 ENV NODE_ENV=production
