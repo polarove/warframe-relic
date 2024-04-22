@@ -6,8 +6,7 @@
     <div
       class="i-mdi:github"
       color="~ hover:$el-color-primary"
-      :w="size"
-      :h="size"
+      :style="{ width: size, height: size }"
     ></div>
   </a>
 </template>

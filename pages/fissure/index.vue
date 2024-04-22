@@ -1,7 +1,22 @@
 <template>
   <client-only>
     <wt-header>
-      <wt-header-icons> </wt-header-icons>
+      <wt-header-icons>
+        <el-col :span="4">
+          <el-dropdown>
+            <div class="fissure">
+              <nuxt-icon name="playlist/fissure"></nuxt-icon>
+            </div>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item active> 始源星系 </el-dropdown-item>
+                <el-dropdown-item> 钢铁之路 </el-dropdown-item>
+                <el-dropdown-item> 九重天 </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </el-col>
+      </wt-header-icons>
     </wt-header>
   </client-only>
   <wt-context-menu-container>
@@ -314,5 +329,14 @@ useHead({
 }
 .state-icon.failed {
   color: var(--el-color-danger);
+}
+
+.fissure:deep(.nuxt-icon svg) {
+  width: 1.7em;
+  height: 1.7em;
+  cursor: pointer;
+  &:hover {
+    color: var(--el-color-primary);
+  }
 }
 </style>
