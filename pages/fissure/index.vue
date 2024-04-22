@@ -5,8 +5,8 @@
         <el-col :span="4">
           <div
             class="i-ep:refresh"
-            @click="updateFissure()"
-            :class="pageState.reload"
+            @click="updateManually()"
+            :class="manualUpdate"
             w="1.7em"
             h="1.7em"
             color="~ hover:$el-color-primary"
@@ -116,14 +116,6 @@ const DATA_UPDATE_FAILED = {
   tip: '更新失败',
   className: 'failed',
   updating: false
-}
-
-const pageState = reactive({
-  reload: ''
-})
-
-const updateFissure = () => {
-  console.log(2)
 }
 
 useHead({
@@ -324,8 +316,6 @@ const processUpdate = (
   // 检查请求的数据是否已经更新完毕
   const checkUpdates = async (fissures: Fissure[], times: number) => {
     if (fissures) {
-      updateState(`正在对第${times}次更新进行检查`, DATA_UPDATING)
-      await nextTick()
       const intersection = fissures
         .map((fissure) => fissure.id)
         .filter((id) => expiredFissureIdQueue.includes(id))
@@ -337,25 +327,21 @@ const processUpdate = (
         const updates = fissures.filter((item) =>
           VoidUtil.isVoid(currentFissures.find((exist) => exist.id === item.id))
         )
-        updateState('更新完毕', DATA_CLEAN)
-        await nextTick()
-        return Promise.resolve(updates)
-      } else {
-        const failedTip = updateState(
-          `第${times}次获取的数据已经过期，重新获取中...`,
-          DATA_UPDATING
-        )
-        await nextTick()
-        return Promise.reject(failedTip)
-      }
-    } else {
-      const errorTip = updateState(
-        `第${times}次获取到的裂缝数据为空，请刷新页面`,
-        DATA_UPDATE_FAILED
-      )
-      await nextTick()
-      return Promise.reject(errorTip)
-    }
+        return Promise.resolve({
+          fissures: updates,
+          message: parseLog('更新完毕'),
+          state: DATA_CLEAN
+        })
+      } else
+        return Promise.reject({
+          message: parseLog(`第${times}次获取的数据已经过期，重新获取中...`),
+          state: DATA_UPDATING
+        })
+    } else
+      return Promise.reject({
+        message: `第${times}次获取到的裂缝数据为空，请刷新页面`,
+        state: DATA_UPDATE_FAILED
+      })
   }
 
   const stopUpdate = (
@@ -370,12 +356,21 @@ const processUpdate = (
     state: number = 1,
     indicator: NodeJS.Timeout | undefined = undefined
   ): NodeJS.Timeout | void => {
-    $fetch(url, data)
-      .then((res) => checkUpdates(res as Fissure[], state))
-      .then((res) => stopUpdate(res, indicator))
+    $fetch<Fissure[]>(url, data)
+      .then((fissures) => {
+        updateState(`正在对第${state}次更新进行检查`, DATA_UPDATING)
+        return fissures
+      })
+      .then((fissures) => checkUpdates(fissures, state))
+      .then((res) => {
+        updateState(res.message, res.state)
+        return res
+      })
+      .then((res) => stopUpdate(res.fissures, indicator))
       .then((res) => prepareFissures(res))
       .then((res) => updateUserView(res))
-      .catch(() => {
+      .catch((err) => {
+        updateState(err.message, err.state)
         const reload = () => {
           indicator = setTimeout(
             () => launch((state += 1), indicator),
@@ -402,6 +397,44 @@ const prepareData = () => {
     .catch((err) => handleError(err))
 }
 prepareData()
+
+/** ---------------------------------- */
+const manualUpdate = ref('')
+const updateManually = () => {
+  const checkingForUpdates = (fissures: Fissure[]) => {
+    origin.state = DATA_UPDATING
+    empyrean.state = DATA_UPDATING
+    steelPath.state = DATA_UPDATING
+    manualUpdate.value = `state-icon ${DATA_UPDATING.className} ${DATA_UPDATING.icon}`
+    return fissures
+  }
+
+  const finishUpdate = () => {
+    origin.state = DATA_CLEAN
+    empyrean.state = DATA_CLEAN
+    steelPath.state = DATA_CLEAN
+    manualUpdate.value = `state-icon ${DATA_CLEAN.className} ${DATA_CLEAN.icon}`
+  }
+
+  const updateFailed = (err: string | undefined) => {
+    handleError(err)
+    origin.state = DATA_UPDATE_FAILED
+    empyrean.state = DATA_UPDATE_FAILED
+    steelPath.state = DATA_UPDATE_FAILED
+    manualUpdate.value = `state-icon ${DATA_UPDATE_FAILED.className} ${DATA_UPDATE_FAILED.icon}`
+  }
+
+  const { url, data } = prepareRequest()
+  $fetch<Fissure[]>(url, data)
+    .then((res) => checkingForUpdates(res))
+    .then((res) => prepareFissures(res))
+    .then((res) => checkDataState(res))
+    .then((modified) => fillSteelPath(modified!))
+    .then((leftover) => fillEmpyrean(leftover))
+    .then((leftover) => fillOrigin(leftover))
+    .then(() => finishUpdate())
+    .catch((err) => updateFailed(err))
+}
 
 const handleError = (err: string | undefined) => {
   ElMessage.error(
