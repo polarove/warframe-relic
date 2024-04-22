@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "d": "nuxt dev --port 3000 --host",
+    "dev": "nuxt dev --port 3000 --host",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
@@ -31,13 +31,13 @@
     "nuxt-icons": "^3.2.1",
     "typescript": "^5.4.5",
     "vue": "^3.4.23",
-    "vue-router": "^4.3.2"
+    "vue-router": "^4.3.2",
+    "@nuxtjs/device": "^3.1.1"
   },
   "devDependencies": {
-    "@cz-translated-changelog/zh-cn": "^0.0.42",
-    "@nuxtjs/device": "^3.1.1",
-    "@translated-lint/zh-cn": "^0.0.29",
     "@unocss/nuxt": "^0.59.4",
+    "@cz-translated-changelog/zh-cn": "^0.0.42",
+    "@translated-lint/zh-cn": "^0.0.29",
     "commitizen": "latest",
     "husky": "latest",
     "lint-staged": "^15.2.2",
