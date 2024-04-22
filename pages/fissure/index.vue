@@ -221,28 +221,31 @@ const prepareFissures = (fissures: Fissure[]) => {
 
 const fillSteelPath = (fissures: Fissure[]) => {
   if (ListUtil.isEmpty(fissures)) steelPath.empty = true
-  steelPath.fissure = fissures
+  fissures
     .filter((fissure) => fissure.isHard)
-    .sort((a, b) => a.tierNum - b.tierNum)
+    .forEach((fissure) => steelPath.fissure.push(fissure))
+  steelPath.fissure.sort((a, b) => a.tierNum - b.tierNum)
   steelPath.loading = false
   return Promise.resolve(fissures)
 }
 
 const fillEmpyrean = (fissures: Fissure[]) => {
   if (ListUtil.isEmpty(fissures)) empyrean.empty = true
-  empyrean.fissure = fissures
+  fissures
     .filter((fissure) => fissure.isStorm)
-    .sort((a, b) => a.tierNum - b.tierNum)
+    .forEach((fissure) => empyrean.fissure.push(fissure))
+  empyrean.fissure.sort((a, b) => a.tierNum - b.tierNum)
   empyrean.loading = false
   return Promise.resolve(fissures)
 }
 
 const fillOrigin = (fissures: Fissure[]) => {
   if (ListUtil.isEmpty(fissures)) origin.empty = true
-  origin.fissure = fissures
+  fissures
     .filter((fissure) => !fissure.isStorm)
     .filter((fissure) => !fissure.isHard)
-    .sort((a, b) => a.tierNum - b.tierNum)
+    .forEach((fissure) => origin.fissure.push(fissure))
+  origin.fissure.sort((a, b) => a.tierNum - b.tierNum)
   origin.loading = false
 }
 
