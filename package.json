@@ -21,7 +21,7 @@
     "@nuxtjs/color-mode": "^3.4.0",
     "@pinia-plugin-persistedstate/nuxt": "^1.2.0",
     "@pinia/nuxt": "^0.5.1",
-    "@polaris_liu/toolcat": "1.0.22",
+    "@polaris_liu/toolcat": "workspace:*",
     "@vue/shared": "^3.4.23",
     "@vueuse/core": "^10.9.0",
     "@vueuse/motion": "^2.1.0",
