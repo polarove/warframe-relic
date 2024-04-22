@@ -1,8 +1,7 @@
 FROM node:21.4.0 AS build
 WORKDIR /app
-RUN corepack enable yarn
 COPY . /app/
-RUN yarn && yarn build
+RUN npm i && npm run build
 
 FROM node:21.4.0 AS final
 ENV NODE_ENV=production

@@ -342,12 +342,12 @@ const processUpdate = (
         logFissure(currentFissures, fissures, updates)
         return Promise.resolve({
           fissures: updates,
-          message: parseLog('更新完毕'),
+          message: '更新完毕',
           state: DATA_CLEAN
         })
       } else
         return Promise.reject({
-          message: parseLog(`第${times}次获取的数据已经过期，重新获取中...`),
+          message: `第${times}次获取的数据已经过期，重新获取中...`,
           state: DATA_UPDATING
         })
     } else
