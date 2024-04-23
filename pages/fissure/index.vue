@@ -188,6 +188,7 @@ const parseState = (defaultState: FissureDataState, newMessage?: string) => {
 const updateState = (name: string, tip: string, state: FissureDataState) => {
   const log = parseLog(name, tip)
   console.log(log)
+  origin.state = {}
   origin.state = parseState(state, log)
   console.log(parseLog(name, JSON.stringify(origin.state)))
   logDivider()
