@@ -185,7 +185,7 @@ const parseState = (defaultState: FissureDataState, newMessage?: string) => {
 }
 
 const updateState = (name: string, tip: string, state: FissureDataState) => {
-  const log = parseLog(name, '更新页面状态')
+  const log = parseLog(name, tip)
   console.log(log)
   origin.state = parseState(state, log)
   console.log(parseLog(name, JSON.stringify(origin.state)))
