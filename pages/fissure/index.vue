@@ -168,10 +168,18 @@ const cleanOrigin = (expired: Fissure) => {
   )
   if (pageState.updating) return
   pageState.updating = true
+  logDivider()
   processUpdate(
     expired,
     '始源星系',
     (state: FissureDataState) => (fissureState.state = state)
+  )
+  logDivider()
+}
+
+const logDivider = () => {
+  console.log(
+    `----${new Date().toLocaleString()}-------------------------------------------------------------------------------------------------------------------------------------`
   )
 }
 
@@ -194,24 +202,19 @@ const processUpdate = (
   }
 
   const updateState = (tip: string, state: FissureDataState) => {
-    console.log(parseLog('更新视图状态'))
+    console.log(parseLog('更新页面状态'))
     const message = parseLog(tip)
     console.log(message)
     setState(parseState(state, message))
     console.log(parseLog(JSON.stringify(fissureState.state)))
+    logDivider()
     return message
   }
 
   const logFissure = (a: Fissure[], b: Fissure[], c: Fissure[]) => {
-    console.log(
-      `----${new Date().toLocaleString()}-------------------------------------------------------------------------------------------------------------------------------------`
-    )
     console.log('当前：', a)
     console.log('获取的：', b)
     console.log('不同的', c)
-    console.log(
-      `----${new Date().toLocaleString()}-------------------------------------------------------------------------------------------------------------------------------------`
-    )
   }
 
   // 检查请求的数据是否已经更新完毕
