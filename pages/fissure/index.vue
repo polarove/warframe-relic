@@ -23,10 +23,10 @@
     <h1 text="center">裂缝订阅功能仍在制作中</h1>
     <wt-fissure
       title="始源星系"
-      :fissures="fissureState.fissure"
+      :fissures="origin.fissure"
       class="min-h-50vh"
-      v-loading="fissureState.loading"
-      :is-empty="fissureState.empty"
+      v-loading="origin.loading"
+      :is-empty="origin.empty"
       @finish="(fissure: Fissure) => (fissure.valid = false)"
       @finish-origin="(expired: Fissure) => cleanOrigin(expired)"
     >
@@ -36,9 +36,9 @@
           w="1.2em"
           h="1.2em"
           class="state-icon"
-          :class="`${fissureState.state.icon} ${fissureState.state.className}`"
+          :class="`${origin.state.icon} ${origin.state.className}`"
         />
-        <span> {{ fissureState.state.tip }}</span>
+        <span> {{ origin.state.tip }}</span>
       </div>
     </wt-fissure>
   </wt-context-menu-container>
@@ -103,7 +103,7 @@ const isValidFissure = (fissure: Fissure) => {
   )
 }
 
-const fissureState = reactive<FissureState>({
+const origin = reactive<FissureState>({
   loading: true,
   empty: false,
   fissure: [],
@@ -116,13 +116,11 @@ const fissureState = reactive<FissureState>({
 })
 
 const checkDataState = (fissures: Fissure[]) => {
-  fissureState.state = fissureState.fissure.every((fissure) =>
-    isValidFissure(fissure)
-  )
+  origin.state = origin.fissure.every((fissure) => isValidFissure(fissure))
     ? DATA_CLEAN
     : DATA_OUTDATED
 
-  if (fissureState.state) return Promise.resolve(fissures)
+  if (origin.state) return Promise.resolve(fissures)
   else return Promise.reject('[裂缝更新]：裂缝中含有过期裂缝')
 }
 
@@ -136,10 +134,10 @@ const prepareFissures = (fissures: Fissure[]) => {
     })
 }
 
-const currentFissures = () => fissureState.fissure
+const currentFissures = () => origin.fissure
 
 const fillOrigin = (fissures: Fissure[]) => {
-  if (ListUtil.isEmpty(fissures)) fissureState.empty = true
+  if (ListUtil.isEmpty(fissures)) origin.empty = true
   updateOrigin(fissures)
 }
 
@@ -147,9 +145,9 @@ const updateOrigin = (fissures: Fissure[]) => {
   fissures
     .filter((fissure) => !fissure.isStorm)
     .filter((fissure) => !fissure.isHard)
-    .forEach((fissure) => fissureState.fissure.push(fissure))
-  fissureState.fissure.sort((a, b) => a.tierNum - b.tierNum)
-  fissureState.loading = false
+    .forEach((fissure) => origin.fissure.push(fissure))
+  origin.fissure.sort((a, b) => a.tierNum - b.tierNum)
+  origin.loading = false
 }
 
 const { expiredFissureIdQueue, addExpiredFissureId, dropExpiredFissureIds } =
@@ -163,17 +161,11 @@ const pageState = reactive({
 
 // 倒计时结束时清除过期的裂缝
 const cleanOrigin = (expired: Fissure) => {
-  fissureState.fissure = fissureState.fissure.filter(
-    (fissure) => fissure.id !== expired.id
-  )
+  origin.fissure = origin.fissure.filter((fissure) => fissure.id !== expired.id)
   if (pageState.updating) return
   pageState.updating = true
   logDivider()
-  processUpdate(
-    expired,
-    '始源星系',
-    (state: FissureDataState) => (fissureState.state = state)
-  )
+  processUpdate(expired, '始源星系')
   logDivider()
 }
 
@@ -183,33 +175,28 @@ const logDivider = () => {
   )
 }
 
-const processUpdate = (
-  expired: Fissure,
-  name: string,
-  setState: (state: FissureDataState) => void
-) => {
+const parseLog = (name: string, message: string) => {
+  return `[裂缝更新]：${name} | ${message}`
+}
+
+const parseState = (defaultState: FissureDataState, newMessage?: string) => {
+  if (newMessage) defaultState.tip = newMessage
+  return defaultState
+}
+
+const updateState = (name: string, tip: string, state: FissureDataState) => {
+  const log = parseLog(name, '更新页面状态')
+  console.log(log)
+  origin.state = parseState(state, log)
+  console.log(parseLog(name, JSON.stringify(origin.state)))
+  logDivider()
+  return log
+}
+
+const processUpdate = (expired: Fissure, name: string) => {
   const id = expired.id
   !expiredFissureIdQueue.includes(id) && addExpiredFissureId(id)
   const { url, data } = prepareRequest()
-
-  const parseLog = (message: string) => {
-    return `[裂缝更新]：${name} | ${message}`
-  }
-
-  const parseState = (defaultState: FissureDataState, newMessage?: string) => {
-    if (newMessage) defaultState.tip = newMessage
-    return defaultState
-  }
-
-  const updateState = (tip: string, state: FissureDataState) => {
-    console.log(parseLog('更新页面状态'))
-    const message = parseLog(tip)
-    console.log(message)
-    setState(parseState(state, message))
-    console.log(parseLog(JSON.stringify(fissureState.state)))
-    logDivider()
-    return message
-  }
 
   const logFissure = (a: Fissure[], b: Fissure[], c: Fissure[]) => {
     console.log('当前：', a)
@@ -260,19 +247,19 @@ const processUpdate = (
   ): NodeJS.Timeout | void => {
     $fetch<Fissure[]>(url, data)
       .then((fissures) => {
-        updateState(`正在对第${state}次更新进行检查`, DATA_UPDATING)
+        updateState(name, `正在对第${state}次更新进行检查`, DATA_UPDATING)
         return fissures
       })
       .then((fissures) => checkUpdates(fissures, state))
       .then((updates) => {
-        updateState(updates.message, updates.state)
+        updateState(name, updates.message, updates.state)
         return updates.fissures
       })
       .then((prepared) => prepareFissures(prepared))
       .then((elected) => updateOrigin(elected))
       .then(() => stopUpdate(indicator))
       .catch((err) => {
-        updateState(err.message, err.state)
+        updateState(name, err.message, err.state)
         const reload = () => {
           indicator = setTimeout(
             () => launch((state += 1), indicator),
