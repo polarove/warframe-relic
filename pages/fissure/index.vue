@@ -139,6 +139,7 @@ const currentFissures = () => origin.fissure
 const fillOrigin = (fissures: Fissure[]) => {
   if (ListUtil.isEmpty(fissures)) origin.empty = true
   updateOrigin(fissures)
+  origin.loading = false
 }
 
 const updateOrigin = (fissures: Fissure[]) => {
@@ -148,7 +149,6 @@ const updateOrigin = (fissures: Fissure[]) => {
   console.log('即将更新至始源星系：', newFissure)
   newFissure.forEach((fissure) => origin.fissure.push(fissure))
   origin.fissure.sort((a, b) => a.tierNum - b.tierNum)
-  origin.loading = false
 }
 
 const { expiredFissureIdQueue, addExpiredFissureId, dropExpiredFissureIds } =
