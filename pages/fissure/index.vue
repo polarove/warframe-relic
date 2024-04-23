@@ -142,10 +142,11 @@ const fillOrigin = (fissures: Fissure[]) => {
 }
 
 const updateOrigin = (fissures: Fissure[]) => {
-  fissures
+  const newFissure = fissures
     .filter((fissure) => !fissure.isStorm)
     .filter((fissure) => !fissure.isHard)
-    .forEach((fissure) => origin.fissure.push(fissure))
+  console.log('即将更新至始源星系：', newFissure)
+  newFissure.forEach((fissure) => origin.fissure.push(fissure))
   origin.fissure.sort((a, b) => a.tierNum - b.tierNum)
   origin.loading = false
 }
