@@ -36,8 +36,8 @@
   },
   "devDependencies": {
     "@unocss/nuxt": "^0.59.4",
-    "@cz-translated-changelog/zh-cn": "^0.0.42",
-    "@translated-lint/zh-cn": "^0.0.29",
+    "@cz-translated-changelog/zh-cn": "workspace:*",
+    "@translated-lint/zh-cn": "workspace:*",
     "commitizen": "latest",
     "husky": "latest",
     "lint-staged": "^15.2.2",
