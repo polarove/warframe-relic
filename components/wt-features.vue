@@ -11,8 +11,7 @@
     >
       <nuxt-link :to="feature.path" style="text-decoration: none">
         <el-card>
-          <p>裂缝</p>
-          <p>始源星系 / 钢铁之路 / 九重天</p>
+          <h1>{{ feature.name }}</h1>
         </el-card>
       </nuxt-link>
     </el-col>
@@ -20,7 +19,11 @@
 </template>
 
 <script setup lang="ts">
-const features = [{ name: '裂缝', path: '/fissure' }]
+const features = [
+  { name: '始源星系 - 裂缝', path: '/fissure/origin' },
+  { name: '钢铁之路 - 裂缝', path: '/fissure/steelpath' },
+  { name: '九重天 - 裂缝', path: '/fissure/empyrean' }
+]
 </script>
 
 <style lang="scss" scoped>

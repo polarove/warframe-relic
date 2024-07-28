@@ -19,6 +19,7 @@
     "@iconify-json/ep": "^1.1.15",
     "@iconify-json/mdi": "^1.1.66",
     "@nuxtjs/color-mode": "^3.4.0",
+    "@nuxtjs/device": "^3.1.1",
     "@pinia-plugin-persistedstate/nuxt": "^1.2.0",
     "@pinia/nuxt": "^0.5.1",
     "@polaris_liu/toolcat": "latest",
@@ -27,21 +28,20 @@
     "@vueuse/motion": "^2.1.0",
     "@vueuse/nuxt": "^10.9.0",
     "element-plus": "^2.7.1",
-    "nuxt": "^3.11.2",
     "nuxt-icons": "^3.2.1",
     "typescript": "^5.4.5",
     "vue": "^3.4.23",
-    "vue-router": "^4.3.2",
-    "@nuxtjs/device": "^3.1.1"
+    "vue-router": "^4.3.2"
   },
   "devDependencies": {
-    "@unocss/nuxt": "^0.59.4",
     "@cz-translated-changelog/zh-cn": "latest",
     "@translated-lint/zh-cn": "latest",
+    "@unocss/nuxt": "^0.59.4",
     "commitizen": "latest",
     "husky": "latest",
     "lint-staged": "^15.2.2",
     "npm-check-updates": "^16.14.18",
+    "nuxt": "^3.12.4",
     "prettier": "^3.2.5",
     "sass": "^1.75.0",
     "vitest": "^1.5.0"
@@ -51,5 +51,6 @@
       "path": "node_modules/@cz-translated-changelog/zh-cn"
     }
   },
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "packageManager": "pnpm@9.5.0+sha512.140036830124618d624a2187b50d04289d5a087f326c9edfc0ccd733d76c4f52c3a313d4fc148794a2a9d81553016004e6742e8cf850670268a7387fc220c903"
 }

@@ -1,5 +1,5 @@
 <template>
-  <section class="wt-header" :class="{ shadow: scrolled }">
+  <div style="--el-card-padding: 0" class="el-card wt-header" shadow="never">
     <el-row justify="space-between" items="center" h="100%">
       <el-col :md="20" :lg="22">
         <nuxt-link to="/" class="logo">
@@ -10,12 +10,10 @@
         <slot></slot>
       </el-col>
     </el-row>
-  </section>
+  </div>
 </template>
 
-<script setup lang="ts">
-const scrolled = computed(() => useWindowScroll().y.value > 0)
-</script>
+<script setup lang="ts"></script>
 
 <style lang="scss" scoped>
 .wt-header {
@@ -26,6 +24,7 @@ const scrolled = computed(() => useWindowScroll().y.value > 0)
   top: 0;
   z-index: 2001;
   height: 57px;
+
   .logo {
     color: var(--el-text-color-regular);
     text-decoration: none;
@@ -35,10 +34,5 @@ const scrolled = computed(() => useWindowScroll().y.value > 0)
       color: var(--el-color-primary);
     }
   }
-}
-
-.wt-header.shadow {
-  transition: all 200ms ease-in-out;
-  background-color: var(--el-bg-color);
 }
 </style>
