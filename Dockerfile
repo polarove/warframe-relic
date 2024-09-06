@@ -1,10 +1,10 @@
-FROM node:21.4.0 AS build
+FROM node:latest AS build
 WORKDIR /app
 RUN corepack enable pnpm
 COPY . /app/
 RUN yarn && yarn build
 
-FROM node:21.4.0 AS final
+FROM node:latest AS final
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 EXPOSE 3000
