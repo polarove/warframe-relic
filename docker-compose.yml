@@ -1,5 +1,7 @@
 services:
   warframe-team-nuxt:
+    container_name: warframe-team-nuxt
+    restart: always
     image: warframe-team-nuxt
     ports:
       - 3000:3000
