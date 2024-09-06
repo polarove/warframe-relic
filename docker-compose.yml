@@ -1,4 +1,3 @@
-version: '1'
 services:
   warframe-team-nuxt:
     image: warframe-team-nuxt
