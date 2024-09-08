@@ -12,6 +12,7 @@ const closeMenu = inject('closeMenu') as Function
 const emits = defineEmits(['select'])
 
 const handleClick = () => {
+  ElMessage.warning('功能还在制作中')
   emits('select')
   closeMenu()
 }

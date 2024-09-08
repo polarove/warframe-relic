@@ -1,32 +1,62 @@
 <template>
   <el-row :gutter="14">
-    <el-col
-      :xs="24"
-      :sm="12"
-      :md="8"
-      :xl="6"
-      class="item"
-      :key="index"
-      v-for="(feature, index) in features"
-    >
-      <nuxt-link :to="feature.path" style="text-decoration: none">
-        <el-card>
-          <h1>{{ feature.name }}</h1>
-        </el-card>
-      </nuxt-link>
+    <el-col :xs="24" :sm="12" :md="10" :xl="6" class="item">
+      <el-card class="p-r box">
+        <h1 class="title flex-center">
+          <nuxt-icon name="playlist/fissure"></nuxt-icon>
+          虚空裂缝
+        </h1>
+        <div
+          class="p-a top-50% w-100% left-50% transform display-none text-center option"
+          style="--un-translate-x: -50%; --un-translate-y: -50%"
+        >
+          <nuxt-link
+            to="/fissure/origin"
+            class="hover-color-primary lg:px-6 md:px-3 lt-md:px-2 select-none decoration-none color-inherit"
+          >
+            <span class="text-2xl"> 始源星系 </span>
+          </nuxt-link>
+          <nuxt-link
+            to="/fissure/steel-path"
+            class="hover-color-primary lg:px-6 md:px-3 lt-md:px-2 select-none decoration-none color-inherit"
+          >
+            <span class="text-2xl"> 钢铁之路 </span>
+          </nuxt-link>
+          <nuxt-link
+            to="/fissure/empyrean"
+            class="hover-color-primary lg:px-6 md:px-3 lt-md:px-2 select-none decoration-none color-inherit"
+          >
+            <span class="text-2xl"> 九重天 </span>
+          </nuxt-link>
+        </div>
+      </el-card>
     </el-col>
   </el-row>
 </template>
 
-<script setup lang="ts">
-const features = [
-  { name: '始源星系 - 裂缝', path: '/fissure/origin' },
-  { name: '钢铁之路 - 裂缝', path: '/fissure/steelpath' },
-  { name: '九重天 - 裂缝', path: '/fissure/empyrean' }
-]
-</script>
+<script setup lang="ts"></script>
 
 <style lang="scss" scoped>
+.title:deep(.nuxt-icon svg) {
+  width: 2em;
+  height: 2em;
+  cursor: pointer;
+  &:hover {
+    color: var(--el-color-primary);
+  }
+}
+.box {
+  min-height: 120px;
+  &:hover {
+    .title {
+      display: none;
+    }
+    .option {
+      display: block;
+    }
+  }
+}
+
 .item {
   padding-bottom: 16px;
   &::v-deep(.el-card) {

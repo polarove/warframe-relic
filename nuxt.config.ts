@@ -2,14 +2,18 @@ import { resolve } from 'path'
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: false },
+
   routeRules: {
     '/': { prerender: true }
   },
+
   alias: {
     '@css': resolve(__dirname, './assets/css'),
     '@scss': resolve(__dirname, './assets/scss')
   },
+
   css: ['@css/normalize.css', '@css/scrollbar.css', '@css/universal.css'],
+
   modules: [
     '@nuxtjs/color-mode',
     '@unocss/nuxt',
@@ -31,6 +35,7 @@ export default defineNuxtConfig({
     '@pinia-plugin-persistedstate/nuxt',
     ['@element-plus/nuxt', { importStyle: 'scss', themes: ['dark'] }]
   ],
+
   colorMode: {
     preference: 'system', // default value of $colorMode.preference
     fallback: 'dark', // fallback value if not system preference found
@@ -39,6 +44,7 @@ export default defineNuxtConfig({
     classSuffix: '',
     storageKey: 'nuxt-color-mode'
   },
+
   vite: {
     css: {
       preprocessorOptions: {
@@ -52,6 +58,7 @@ export default defineNuxtConfig({
       }
     }
   },
+
   components: {
     dirs: [
       {
@@ -59,5 +66,7 @@ export default defineNuxtConfig({
         pathPrefix: false
       }
     ]
-  }
+  },
+
+  compatibilityDate: '2024-09-08'
 })

@@ -7,7 +7,7 @@
       v-loading="empyrean.loading"
       :is-empty="empyrean.empty"
       @finish="(fissure: Fissure) => (fissure.valid = false)"
-      @finish-empyrean="(expired: Fissure) => cleanOrigin(expired)"
+      @finish-empyrean="(expired: Fissure) => clearFissure(expired)"
     >
       <div class="flex-center">
         <span
@@ -17,7 +17,8 @@
           class="state-icon"
           :class="`${empyrean.state.icon} ${empyrean.state.className}`"
         />
-        <span> {{ empyrean.state.tip }}</span>
+
+        <span v-if="!empyrean.state.updating"> {{ empyrean.state.tip }}</span>
       </div>
     </wt-fissure>
   </wt-context-menu-container>
@@ -96,18 +97,17 @@ const prepareFissures = (fissures: Fissure[]) => {
 
 const currentFissures = () => empyrean.fissure
 
-const fillOrigin = (fissures: Fissure[]) => {
+const fillFissure = (fissures: Fissure[]) => {
   if (ListUtil.isEmpty(fissures)) empyrean.empty = true
-  updateOrigin(fissures)
-  empyrean.loading = false
+  updateFissure(fissures).finally(() => (empyrean.loading = false))
 }
 
-const updateOrigin = (fissures: Fissure[]) => {
-  const newFissure = fissures
-    .filter((fissure) => !fissure.isStorm)
-    .filter((fissure) => !fissure.isHard)
-  newFissure.forEach((fissure) => empyrean.fissure.push(fissure))
+const updateFissure = (fissures: Fissure[]) => {
+  fissures
+    .filter((fissure) => fissure.isStorm)
+    .forEach((fissure) => empyrean.fissure.push(fissure))
   empyrean.fissure.sort((a, b) => a.tierNum - b.tierNum)
+  return Promise.resolve()
 }
 
 const { expiredFissureIdQueue, addExpiredFissureId, dropExpiredFissureIds } =
@@ -120,7 +120,7 @@ const pageState = reactive({
 })
 
 // 倒计时结束时清除过期的裂缝
-const cleanOrigin = (expired: Fissure) => {
+const clearFissure = (expired: Fissure) => {
   empyrean.fissure = empyrean.fissure.filter(
     (fissure) => fissure.id !== expired.id
   )
@@ -219,7 +219,7 @@ const processUpdate = (expired: Fissure, name: string) => {
         return updates.fissures
       })
       .then((prepared) => prepareFissures(prepared))
-      .then((elected) => updateOrigin(elected))
+      .then((elected) => updateFissure(elected))
       .then(() => stopUpdate(indicator))
       .catch((err) => {
         updateState(name, err.message, err.state)
@@ -243,7 +243,7 @@ const prepareData = () => {
     .then((res) => handleServerSideRequest(res))
     .then((res) => prepareFissures(res))
     .then((res) => checkDataState(res))
-    .then((leftover) => fillOrigin(leftover))
+    .then((leftover) => fillFissure(leftover))
     .catch((err) =>
       ElMessage.error(
         err ? err : '[数据错误]：加载裂缝数据时发生意外错误，请刷新页面'

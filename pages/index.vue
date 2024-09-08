@@ -11,6 +11,12 @@
     </div>
     <wt-features class="pt-67px" />
   </section>
+  <teleport to="body">
+    <div class="i-ep:circle-check display-none"></div>
+    <div class="i-ep:warning display-none"></div>
+    <div class="i-ep:loading display-none"></div>
+    <div class="i-ep:close-bold display-none"></div>
+  </teleport>
 </template>
 
 <script setup lang="ts">

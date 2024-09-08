@@ -21,7 +21,7 @@
             <el-dropdown-item command="/fissure/origin" active>
               始源星系
             </el-dropdown-item>
-            <el-dropdown-item command="/fissure/steelpath">
+            <el-dropdown-item command="/fissure/steel-path">
               钢铁之路
             </el-dropdown-item>
             <el-dropdown-item command="/fissure/empyrean">
