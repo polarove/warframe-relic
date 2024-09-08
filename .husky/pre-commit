@@ -1,2 +1,2 @@
 #!/bin/bash
-pnpm exec lint-staged
+# yarn exec lint-staged

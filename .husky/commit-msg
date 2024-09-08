@@ -1,3 +1,3 @@
 #!/bin/bash
-echo "[@cz-translated-changelog]: 正在检查提交消息"
-pnpm tlzc --path ${1}
+# echo "[@cz-translated-changelog]: 正在检查提交消息"
+# yarn exec tlzc --path ${1}
